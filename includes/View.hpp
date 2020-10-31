@@ -35,6 +35,6 @@ class View {
 		* \param std::vector<Images> object
 		* \return Nada
 		* */
-		void render(std::vector<Image> objects);
+		void render(std::vector<std::shared_ptr<Image>> objects);
 };
 
