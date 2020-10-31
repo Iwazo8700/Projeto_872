@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Bloco.hpp"
 
 Bloco::Bloco(int x, int y, std::vector<std::vector<bool>> formato, std::shared_ptr<Sprite> sprite, int height, int width){
