@@ -6,32 +6,29 @@ Formato::Formato(char const *dir){
 	std::string line;
 	std::vector<std::vector<bool>> format;
 	std::vector<bool> format_line;
+	formatos.push_back(std::vector<std::vector<bool>> (1, std::vector<bool>(0, 0)));
+	int ii=0;
+	int jj=0;
+	int kk=0;
 	while (getline(MyReadFile, line)) {
  	 // Output the text from the file
-	 	 std::cout << line << std::endl;
- 		 if(line == "\n"){
-		 	this->formatos.push_back(format);
-			format.clear();
+ 		 if(line.length() == 0){
+		 	//this->formatos.push_back(format);
+			ii++;
+			jj = 0;
+			formatos.push_back(std::vector<std::vector<bool>> (1, std::vector<bool>(1, 0)));
 		 }
 		 else{
+			formatos[ii].push_back(std::vector<bool>(line.length(), 0));
+			if(jj == 0) formatos[ii].erase(formatos[ii].begin());
 		 	for(int i=0; i<line.length(); i++){
-				format_line.push_back(line[i]=='1');
+				formatos[ii][jj][i] =  (line[i]=='1');
 			}
-			format.push_back(format_line);
-		 	format_line.clear();
+			jj++;
 		 }
 
 	}
-	for(int i=0; i<formatos.size(); i++){
-		for (int j=0; j<formatos[i].size(); j++){
-			for(int k=0; k<formatos[i][j].size(); k++){
-				std::cout << this->formatos[i][j][k] << ' ';
-			}
-			std::cout << std::endl;
-		}
-
-		std::cout << std::endl;
-	}
+	MyReadFile.close();
 }
 
 

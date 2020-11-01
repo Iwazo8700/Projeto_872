@@ -20,8 +20,74 @@ int main(){
 	std::vector<std::shared_ptr<Image>> veci = {img};
 	view->render(veci);
 	std::shared_ptr<Formato> format (new Formato("../assets/Formatos.dat"));
-	while (1){
-	continue;
-	}	
+	std::vector<std::vector<bool>> vect = format->get_I();
+	for (int i=0; i<vect.size(); i++){
+		for(int j=0; j<vect.size(); j++){
+			std::cout << vect[i][j];
+		}
+		std::cout << '\n';
+	}
+	
+	std::cout << '\n';
+	
+	vect = format->get_J();
+	for (int i=0; i<vect.size(); i++){
+		for(int j=0; j<vect.size(); j++){
+			std::cout << vect[i][j];
+		}
+		std::cout << '\n';
+	}
+	
+	std::cout << '\n';
+	
+	vect = format->get_L();
+	for (int i=0; i<vect.size(); i++){
+		for(int j=0; j<vect.size(); j++){
+			std::cout << vect[i][j];
+		}
+		std::cout << '\n';
+	}
+	
+	std::cout << '\n';
+	
+	 vect = format->get_O();
+	for (int i=0; i<vect.size(); i++){
+		for(int j=0; j<vect.size(); j++){
+			std::cout << vect[i][j];
+		}
+		std::cout << '\n';
+	}
+	
+	std::cout << '\n';
+	
+	vect = format->get_S();
+	for (int i=0; i<vect.size(); i++){
+		for(int j=0; j<vect.size(); j++){
+			std::cout << vect[i][j];
+		}
+		std::cout << '\n';
+	}
+	
+	std::cout << '\n';
+	
+	vect = format->get_T();
+	for (int i=0; i<vect.size(); i++){
+		for(int j=0; j<vect.size(); j++){
+			std::cout << vect[i][j];
+		}
+		std::cout << '\n';
+	}
+	
+	std::cout << '\n';
+	
+	vect = format->get_Z();
+	for (int i=0; i<vect.size(); i++){
+		for(int j=0; j<vect.size(); j++){
+			std::cout << vect[i][j];
+		}
+		std::cout << '\n';
+	}
+
+
 	return 0;
 }
