@@ -31,3 +31,11 @@ void Map::add_to_map(std::shared_ptr<Bloco> block, int value=1){
 			if(format[i][j])
 				this->map[i+x][j+y] = value;
 }
+
+SDL_Texture* get_texture(int i, int j){
+	return this->sprites[this->map[i][j]-1]->get_texture();
+}
+
+void set_sprites(std::vector<std::shared_ptr<Sprite>> sprites){
+	this->sprites = sprites
+}
