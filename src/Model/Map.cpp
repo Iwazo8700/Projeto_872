@@ -2,6 +2,8 @@
 
 Map::Map(int width, int height, int block_width, int block_height){
 	std::vector<std::vector<int>> map(height, std::vector<int>(width, 0));
+	this->height = height;
+	this->width = width;
 	this->map = map;
 	this->block_width = block_width;
 	this->block_height = block_height;
@@ -42,4 +44,17 @@ std::shared_ptr<Sprite> Map::get_texture(int i, int j){
 
 void Map::set_sprites(std::vector<std::shared_ptr<Sprite>> sprites){
 	this->sprites = sprites;
+}
+
+void Map::completed_lines(int n){
+	this->map.erase(this->map.end()-n+1, this->map.end());
+	for(int i = 0; i < n; i++)
+		this->map.push_back(std::vector<int>(width, 0));
+}
+
+void Map::completed_lines(std::vector<int> lines){
+	for(auto i : lines)
+		this->map.erase(this->map.begin()+i);
+	for(int i = 0; i < lines.size(); i++)
+		this->map.push_back(std::vector<int>(width, 0));
 }
