@@ -1,4 +1,5 @@
 #include "BlockPosition.hpp"
+#include <iostream>
 
 BlockPosition::BlockPosition(int x, int y){
 	this->x_begin = x;
