@@ -26,7 +26,6 @@ std::vector<std::shared_ptr<Image>> BlockPosition::create_image_vector(std::shar
 		j = 0;
 		i++;
 	}
-	
 	return images;
 }
 
@@ -36,7 +35,7 @@ std::vector<std::shared_ptr<Image>> BlockPosition::create_image_vector(std::shar
 	int h = map->get_block_height();
 	std::vector<std::vector<int>> vec = map->get_map();
 	std::vector<std::shared_ptr<Image>> images;
-
+	
 	for(std::vector<int> squares : vec){
 		for(int square : squares){
 			if(square){
@@ -48,6 +47,6 @@ std::vector<std::shared_ptr<Image>> BlockPosition::create_image_vector(std::shar
 		j = 0;
 		i++;
 	}
-
+	
 	return images;
 }

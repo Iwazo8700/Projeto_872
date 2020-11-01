@@ -25,7 +25,6 @@ void Map::add_to_map(std::shared_ptr<Bloco> block, int value=1){
 	int y = block->get_y();
 	
 	std::vector<std::vector<bool>> format = block->get_formato();	
-
 	for(i = 0; i < format.size(); i++)
 		for(j = 0; j < format[i].size(); j++)
 			if(format[i][j])
