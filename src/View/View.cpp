@@ -10,8 +10,8 @@ void View::render(std::vector<std::shared_ptr<Image>> objects){
 	std::vector<std::shared_ptr<Image>>::iterator image;
 
 	// Desenha cada objeto da cena
-	for(image = objects.begin(); image < objects.end(); image++){
-		SDL_RenderCopy(this->sdl->get_renderer(), (*image)->get_texture(), nullptr, (*image)->get_target());
+	for(std::shared_ptr<Image> image : objects){
+		SDL_RenderCopy(this->sdl->get_renderer(), image->get_texture(), nullptr, image->get_target());
 		SDL_RenderPresent(this->sdl->get_renderer());
 	}
 }

@@ -1,6 +1,8 @@
 #include "SDL_Model.hpp"
 
 SDL_Model::SDL_Model(int width, int height){
+	this->SCREEN_WIDTH = width;
+	this->SCREEN_HEIGHT = height;
 	// Inicializando o subsistema de video do SDL
 	if ( SDL_Init (SDL_INIT_VIDEO) < 0 ) {
 		std::cout << SDL_GetError();
@@ -30,8 +32,6 @@ SDL_Model::SDL_Model(int width, int height){
 		SDL_Quit();
 	}
 
-	this->SCREEN_WIDTH = width;
-	this->SCREEN_HEIGHT = height;
 }
 
 SDL_Model::~SDL_Model(){

@@ -16,6 +16,6 @@ class Map{
 		int get_block_height();
 		std::vector<std::vector<int>> get_map();
 		void add_to_map(std::shared_ptr<Bloco> block, int value);
-		SDL_Texture* get_texture(int i, int j);
+		std::shared_ptr<Sprite> get_texture(int i, int j);
 		void set_sprites(std::vector<std::shared_ptr<Sprite>> sprites);
 };
