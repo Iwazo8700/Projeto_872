@@ -23,6 +23,7 @@ std::vector<std::shared_ptr<Image>> BlockPosition::create_image_vector(std::shar
 			}
 			j++;
 		}
+		j = 0;
 		i++;
 	}
 	
