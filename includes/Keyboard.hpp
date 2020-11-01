@@ -20,11 +20,15 @@ class Keyboard{
 	private:
 		SDL_Event evento; // eventos discretos
  		const Uint8* state; // estado do teclado
+		std::shared_ptr<Bloco> bloco;
 
 	public:
-		Keyboard();
-		bool Read(std::shared_ptr<Bloco> bloco);
-		void RotHoraria(std::shared_ptr<Bloco> bloco);
-		void RotAnti(std::shared_ptr<Bloco> bloco);
+		Keyboard(std::shared_ptr<Bloco> bloco);
+		void set_bloco(std::shared_ptr<Bloco> bloco);
+		std::vector<std::vector<bool>> Rotation();
+		bool Quit();
+		int Desloc();
+		std::vector<std::vector<bool>> RotHoraria();
+		std::vector<std::vector<bool>> RotAnti();
 
 };

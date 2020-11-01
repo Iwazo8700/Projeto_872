@@ -6,6 +6,7 @@
 #include "Image.hpp"
 #include "Formato.hpp"
 #include "BlockPosition.hpp"
+#include "Collision.hpp"
 #include "Keyboard.hpp"
 #include <memory>
 #include <vector>
@@ -22,6 +23,9 @@ int main(){
 	std::shared_ptr<Image> img (new Image(0,0,800,800,sprite2));
 	std::shared_ptr<Bloco> block (new Bloco(0,0,format->get_L(),sprite,40,40));
 	std::shared_ptr<BlockPosition> blk_pos(new BlockPosition(20, 20));
+	std::shared_ptr<Keyboard> key (new Keyboard(block));
+	std::shared_ptr<Collision> colisao (new Collision(map));
+	
 	std::vector<std::shared_ptr<Sprite>> vecin;
 	vecin.push_back(sprite);
 	vecin.push_back(sprite2);
@@ -32,9 +36,25 @@ int main(){
 	std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(block);
 	prints.insert(prints.begin(),img);
 	view->render(prints);
-	std::shared_ptr<Keyboard> key (new Keyboard());
+	std::shared_ptr<Bloco> block_aux = block;
+	
+	
+	
 	while(1){
-		if (!(key->Read(block))) break;
+		key->set_bloco(block);
+		
+		
+		if(key->Quit()) break;
+		
+		block_aux = block;	
+		block_aux->set_formato(key->Rotation());
+		if(!(colisao->is_colliding(block_aux))) block->set_formato(block_aux->get_formato());
+		
+		block_aux = block;
+		block_aux->set_x(key->Desloc());
+		if(!(colisao->is_colliding(block_aux))) block->set_x(block_aux->get_x());
+
+
 		prints = blk_pos->create_image_vector(block);
 		view->render(prints);
 		SDL_Delay(100);	
