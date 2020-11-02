@@ -20,6 +20,7 @@ bool MainController::should_move(){
 
 void MainController::step(){
 	int tmp;
+	std::shared_ptr<Bloco> tmp_blk;
 	for(auto block : *(this->pieces)){
 		if(should_move()){
 			block.second->set_y(block.second->get_y()+1);
@@ -36,6 +37,10 @@ void MainController::step(){
 		if(this->collision->is_colliding(block.second))
 			block.second->set_x(tmp);
 		
+		tmp_blk = std::make_shared<Bloco>(*block.second);
+		tmp_blk->set_formato(this->movements->find(block.first)->second->Rotation());
+		if(!this->collision->is_colliding(tmp_blk))
+			block.second->set_formato(tmp_blk->get_formato());
 	}
 }
 
