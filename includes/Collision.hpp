@@ -12,4 +12,5 @@ class Collision{
 		Collision(std::shared_ptr<Map> map);
 		void set_map(std::shared_ptr<Map> map);
 		bool is_colliding(std::shared_ptr<Bloco> block);
+		bool is_colliding(std::shared_ptr<Bloco> block, std::vector<std::shared_ptr<Bloco>> others);
 };

@@ -17,6 +17,7 @@ class Map{
 		std::vector<std::vector<int>> get_map();
 		void add_to_map(std::shared_ptr<Bloco> block, int value);
 		std::shared_ptr<Sprite> get_texture(int i, int j);
+		std::shared_ptr<Sprite> get_texture(int pos);
 		void set_sprites(std::vector<std::shared_ptr<Sprite>> sprites);
 		void completed_lines(int n);
 		void completed_lines(std::vector<int> lines);
