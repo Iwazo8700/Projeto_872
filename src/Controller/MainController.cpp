@@ -1,25 +1,23 @@
 #include "MainController.hpp"
 		
-MainController::MainController(std::shared_ptr<Map> map, std::shared_ptr<std::map<int, std::shared_ptr<Bloco>>> pieces, std::shared_ptr<std::map<int,std::shared_ptr<Keyboard>>> movements, std::shared_ptr<Collision> collision, unsigned int move_time, std::shared_ptr<Formato> formato){
+MainController::MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato){
 	this->map = map;
-	this->pieces = pieces;
-	this->movements = movements;
-	this->move_time = move_time;
-	this->collision = collision;
-	this->timer = 0;
+	this->players = players;
+	std::shared_ptr<Collision> col (new Collision(this->map));
+	this->collision = col;
 	this->formats = formato;
 }
 
-bool MainController::should_move(){
-	if(this->timer+this->move_time <= SDL_GetTicks()){
-		this->timer = SDL_GetTicks();
+bool MainController::should_move(std::shared_ptr<Player> player){
+	if(player->get_time()+player->get_speed() <= SDL_GetTicks()){
+		player->set_time(SDL_GetTicks());
 		return true;
 	}
 	
 	return false;
 }
 
-void MainController::update_board(){
+int MainController::update_board(){
 	std::vector<std::vector<int>> format = this->map->get_map();
 	std::vector<int> complete_lines;
 	int i = 0;
@@ -29,48 +27,70 @@ void MainController::update_board(){
 		i++;
 	}
 	this->map->completed_lines(complete_lines);
+
+	return complete_lines.size();
+}
+
+bool MainController::is_dead(std::shared_ptr<Player> player){
+	int i = 0, y = player->get_piece()->get_y();
+	
+	for(auto line : player->get_piece()->get_formato())
+		if(y+i < 0 && std::count(line.begin(), line.end(), 1) != 0)
+			return true;
+	return false;
+		
 }
 
 void MainController::step(){
 	int tmp;
 	std::shared_ptr<Bloco> tmp_blk;
-	for(auto block : *(this->pieces)){
-		if(should_move()){
-			block.second->set_y(block.second->get_y()+1);
-			if(this->collision->is_colliding(block.second)){
-				block.second->set_y(block.second->get_y()-1);
-				this->map->add_to_map(block.second,1);
-				this->pieces->find(block.first)->second = this->create_random_block(0,0,20,20,block.first, block.second->get_sprite());
-				this->movements->find(block.first)->second->set_bloco(this->pieces->find(block.first)->second);
+	for(auto player : this->players){
+		if(should_move(player) && player->is_alive()){
+			player->get_piece()->set_y(player->get_piece()->get_y()+1);
+			if(this->collision->is_colliding(player->get_piece())){
+				if(is_dead(player)){
+					player->kill();
+					continue;
+				}
+				player->get_piece()->set_y(player->get_piece()->get_y()-1);
+				this->map->add_to_map(player->get_piece(),1);
+				player->set_piece(this->create_random_block(0,-5,20,20, player->get_piece()->get_sprite()));
+				switch(this->update_board()){
+					case 1:
+						player->add_points(40);
+						break;
+					case 2:
+						player->add_points(100);
+						break;
+					case 3:
+						player->add_points(300);
+						break;
+					case 4:
+						player->add_points(1200);
+						break;
+				}
 				continue;
 			}
 		}
-		tmp = block.second->get_x();
-		block.second->set_x(this->movements->find(block.first)->second->Desloc());
-		if(this->collision->is_colliding(block.second))
-			block.second->set_x(tmp);
+		tmp = player->get_piece()->get_x();
+		player->get_piece()->set_x(player->get_keyboard()->Desloc());
+		if(this->collision->is_colliding(player->get_piece()))
+			player->get_piece()->set_x(tmp);
 		
-		tmp_blk = std::make_shared<Bloco>(*block.second);
-		tmp_blk->set_formato(this->movements->find(block.first)->second->Rotation());
+		tmp_blk = std::make_shared<Bloco>(*(player->get_piece()));
+		tmp_blk->set_formato(player->get_keyboard()->Rotation());
 		if(!this->collision->is_colliding(tmp_blk))
-			block.second->set_formato(tmp_blk->get_formato());
+			player->get_piece()->set_formato(tmp_blk->get_formato());
 
-		block.second->set_y(this->movements->find(block.first)->second->Space(collision));
-		//std::cout << block.second->get_y() <<std::endl;
-
+		player->get_piece()->set_y(player->get_keyboard()->Space(this->collision));
 	}
-	this->update_board();
 }
 
-void MainController::set_keyboard(int id, std::shared_ptr<Keyboard> keyboard){
-	this->movements->insert({id, keyboard});
+void MainController::set_players(std::vector<std::shared_ptr<Player>> players){
+	this->players = players;
 }
 
-void MainController::set_block(int id, std::shared_ptr<Bloco> block){
-	this->pieces->insert({id, block});
-}
-
-std::shared_ptr<Bloco> MainController::create_random_block(int x, int y, int height, int width, int id, std::shared_ptr<Sprite> sprite){
+std::shared_ptr<Bloco> MainController::create_random_block(int x, int y, int height, int width, std::shared_ptr<Sprite> sprite){
 	std::vector<std::vector<bool>> vec = this->formats->get_random();
 	return (std::shared_ptr<Bloco>) new Bloco(x, y, vec, sprite, height, width);
 }

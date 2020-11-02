@@ -19,7 +19,9 @@ bool Collision::is_colliding(std::shared_ptr<Bloco> block){
 
 	for(auto line : vec){
 		for(auto element : line){
-			if(element && (y+i < 0 || y+i >= height || j+x < 0 || j+x >= width || current_map[y+i][x+j]))
+			if(element && (y+i >= height || j+x < 0 || j+x >= width))
+				return true;
+			if(element && y+i >= 0 && y+i < height && j+x >= 0 && j+x <width && current_map[y+i][x+j])
 				return true;
 			j++;
 		}
@@ -44,7 +46,9 @@ bool Collision::is_colliding(std::shared_ptr<Bloco> block, std::vector<std::shar
 
 	for(auto line : vec){
 		for(auto element : line){
-			if(element && (i+y < 0 || i+y >= height || j+x < 0 || j+x >= width))
+			if(element && y+i < 0 && y+i < height && j+x > 0 && j+x < width)
+				return false;
+			if(element && (i+y >= height || j+x < 0 || j+x >= width))
 				return true;
 			j++;
 		}

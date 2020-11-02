@@ -1,6 +1,8 @@
 #include "SDL_Model.hpp"
+#include <string> 
 #include "Sprite.hpp"
 #include "Bloco.hpp"
+#include "Player.hpp"
 #include "Map.hpp"
 #include "View.hpp"
 #include "Image.hpp"
@@ -21,18 +23,17 @@ int main(){
 	std::shared_ptr<View> view (new View(sdl));
 	std::shared_ptr<Sprite> sprite (new Sprite("../assets/Bloco.png",sdl));
 	std::shared_ptr<Sprite> sprite2 (new Sprite("../assets/Fundo.png",sdl));
+	std::shared_ptr<Sprite> sprite3 (new Sprite("../assets/luffy.png",sdl));
 	std::shared_ptr<Map> map (new Map(10,20,20,20));
 	std::shared_ptr<Image> img (new Image(0,0,200,400,sprite2));
-	std::shared_ptr<Bloco> block (new Bloco(0,0,format->get_random(),sprite,20,20));
+	std::shared_ptr<Image> end_screen (new Image(0,0,200,400,sprite3));
+	std::shared_ptr<Bloco> block (new Bloco(0,-5,format->get_random(),sprite,20,20));
 	std::shared_ptr<BlockPosition> blk_pos(new BlockPosition(0, 0));
 	std::shared_ptr<Collision> collision (new Collision(map));
 	std::vector<std::shared_ptr<Sprite>> vecin;
 	vecin.push_back(sprite);
 	vecin.push_back(sprite2);
 	map->set_sprites(vecin);
-	std::shared_ptr<std::map<int, std::shared_ptr<Bloco>>> b_map (new std::map<int, std::shared_ptr<Bloco>>());
-	std::shared_ptr<std::map<int, std::shared_ptr<Keyboard>>> k_map (new std::map<int, std::shared_ptr<Keyboard>>());
-	
 
 //	map->add_to_map(block,1);
 
@@ -40,9 +41,10 @@ int main(){
 	
 
 	std::shared_ptr<Keyboard> key (new Keyboard(block));
-	b_map->insert({0,block});	
-	k_map->insert({0,key});	
-	std::shared_ptr<MainController> ctrl (new MainController(map, b_map, k_map, collision, 300, format));
+	std::shared_ptr<Player> player (new Player(block, key, 200));
+	std::vector<std::shared_ptr<Player>> player_vec;
+	player_vec.push_back(player);
+	std::shared_ptr<MainController> ctrl (new MainController(map, player_vec, format));
 
 	while(1){
 		if(key->Quit()) break;
@@ -51,7 +53,9 @@ int main(){
 		view->render(prints);
 		SDL_Delay(100);	*/
 		ctrl->step();
-		std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(b_map->find(0)->second);
+		if(!player_vec[0]->is_alive())
+			break;
+		std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(player_vec[0]->get_piece());
 		std::vector<std::shared_ptr<Image>> prints2 = blk_pos->create_image_vector(map);
 		
 		prints.insert(prints.end(), prints2.begin(),prints2.end());		
@@ -60,6 +64,19 @@ int main(){
 		view->render(prints);
 		SDL_Delay(50);		
 	}
+	
+	
+	std::vector<std::shared_ptr<Image>> prints;
+	prints.push_back(end_screen);
+	std::cout << player_vec[0]->get_points() << std::endl;
 
+	while(1){
+		if(key->Quit()) break;
+
+		view->render(prints);
+		SDL_Delay(50);		
+	}
+	
+	
 	return 0;
 }

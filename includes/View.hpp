@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <SDL2/SDL_image.h>
+//#include <SDL2/SDL_ttf.h>
 #include "SDL_Model.hpp"
 #include "Image.hpp"
 #include <vector>
@@ -36,5 +37,6 @@ class View {
 		* \return Nada
 		* */
 		void render(std::vector<std::shared_ptr<Image>> objects);
+//		void render(std::string text, int x, int y, int height, int width);
 };
 

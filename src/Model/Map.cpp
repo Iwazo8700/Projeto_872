@@ -26,10 +26,11 @@ void Map::add_to_map(std::shared_ptr<Bloco> block, int value=1){
 	int x = block->get_x();
 	int y = block->get_y();
 	
+	
 	std::vector<std::vector<bool>> format = block->get_formato();
 	for(i = 0; i < format.size(); i++)
 		for(j = 0; j < format[i].size(); j++)
-			if(format[i][j])
+			if(format[i][j] && i+y >= 0 && i+y < this->height && x+j >= 0 && x+j < this->width)
 				this->map[i+y][j+x] = value;
 }
 

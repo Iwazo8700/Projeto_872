@@ -7,6 +7,7 @@
 #include "BlockPosition.hpp"
 #include "Collision.hpp"
 #include "Keyboard.hpp"
+#include "Player.hpp"
 #include <vector>
 #include <memory>
 #include <SDL2/SDL.h>
@@ -19,15 +20,14 @@ class MainController{
 		std::shared_ptr<Formato> formats;
 		std::shared_ptr<Map> map;
 		std::shared_ptr<Collision> collision;
-		std::shared_ptr<std::map<int,std::shared_ptr<Bloco>>> pieces;
-		std::shared_ptr<std::map<int,std::shared_ptr<Keyboard>>> movements;
+		std::vector<std::shared_ptr<Player>> players;
 		unsigned int timer, move_time;
 	public:
-		MainController(std::shared_ptr<Map> map, std::shared_ptr<std::map<int,std::shared_ptr<Bloco>>> pieces, std::shared_ptr<std::map<int,std::shared_ptr<Keyboard>>> movements, std::shared_ptr<Collision> collision, unsigned int move_time, std::shared_ptr<Formato> formato);
-		bool should_move();
+		MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato);
+		bool should_move(std::shared_ptr<Player> player);
 		void step();
-		std::shared_ptr<Bloco> create_random_block(int x, int y, int height, int width, int id, std::shared_ptr<Sprite> sprite);
-		void set_block(int id, std::shared_ptr<Bloco> block);
-		void set_keyboard(int id, std::shared_ptr<Keyboard> keyboard);
-		void update_board();
+		std::shared_ptr<Bloco> create_random_block(int x, int y, int height, int width, std::shared_ptr<Sprite> sprite);
+		void set_players(std::vector<std::shared_ptr<Player>> player);
+		int update_board();
+		bool is_dead(std::shared_ptr<Player> player);
 };
