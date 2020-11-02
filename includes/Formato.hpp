@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-
+#include <stdlib.h>
 
 /*! \brief
  *
@@ -31,4 +31,5 @@ class Formato {
 		std::vector<std::vector<bool>> get_S();
 		std::vector<std::vector<bool>> get_Z();
 		std::vector<std::vector<bool>> get_T();
+		std::vector<std::vector<bool>> get_random();
 };

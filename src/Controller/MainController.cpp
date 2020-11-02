@@ -1,12 +1,13 @@
 #include "MainController.hpp"
 		
-MainController::MainController(std::shared_ptr<Map> map, std::shared_ptr<std::map<int, std::shared_ptr<Bloco>>> pieces, std::shared_ptr<std::map<int,std::shared_ptr<Keyboard>>> movements, std::shared_ptr<Collision> collision, unsigned int move_time){
+MainController::MainController(std::shared_ptr<Map> map, std::shared_ptr<std::map<int, std::shared_ptr<Bloco>>> pieces, std::shared_ptr<std::map<int,std::shared_ptr<Keyboard>>> movements, std::shared_ptr<Collision> collision, unsigned int move_time, std::shared_ptr<Formato> formato){
 	this->map = map;
 	this->pieces = pieces;
 	this->movements = movements;
 	this->move_time = move_time;
 	this->collision = collision;
 	this->timer = 0;
+	this->formats = formato;
 }
 
 bool MainController::should_move(){
@@ -66,5 +67,6 @@ void MainController::set_block(int id, std::shared_ptr<Bloco> block){
 }
 
 std::shared_ptr<Bloco> MainController::create_random_block(int x, int y, int height, int width, int id, std::shared_ptr<Sprite> sprite){
-	return (std::shared_ptr<Bloco>) new Bloco(x, y, std::vector<std::vector<bool>>(2,std::vector<bool>(2,true)), sprite, height, width);
+	std::vector<std::vector<bool>> vec = this->formats->get_random();
+	return (std::shared_ptr<Bloco>) new Bloco(x, y, vec, sprite, height, width);
 }

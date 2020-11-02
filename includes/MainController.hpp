@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Formato.hpp"
 #include "Bloco.hpp"
 #include "Map.hpp"
 #include "Image.hpp"
@@ -15,13 +16,14 @@
 
 class MainController{
 	private:
+		std::shared_ptr<Formato> formats;
 		std::shared_ptr<Map> map;
 		std::shared_ptr<Collision> collision;
 		std::shared_ptr<std::map<int,std::shared_ptr<Bloco>>> pieces;
 		std::shared_ptr<std::map<int,std::shared_ptr<Keyboard>>> movements;
 		unsigned int timer, move_time;
 	public:
-		MainController(std::shared_ptr<Map> map, std::shared_ptr<std::map<int,std::shared_ptr<Bloco>>> pieces, std::shared_ptr<std::map<int,std::shared_ptr<Keyboard>>> movements, std::shared_ptr<Collision> collision, unsigned int move_time);
+		MainController(std::shared_ptr<Map> map, std::shared_ptr<std::map<int,std::shared_ptr<Bloco>>> pieces, std::shared_ptr<std::map<int,std::shared_ptr<Keyboard>>> movements, std::shared_ptr<Collision> collision, unsigned int move_time, std::shared_ptr<Formato> formato);
 		bool should_move();
 		void step();
 		std::shared_ptr<Bloco> create_random_block(int x, int y, int height, int width, int id, std::shared_ptr<Sprite> sprite);

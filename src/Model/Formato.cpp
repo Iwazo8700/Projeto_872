@@ -32,6 +32,10 @@ Formato::Formato(char const *dir){
 }
 
 
+std::vector<std::vector<bool>> Formato::get_random(){
+	return this->formatos[rand()%this->formatos.size()];
+}
+
 std::vector<std::vector<bool>> Formato::get_I(){
 	return this->formatos[0];
 }
