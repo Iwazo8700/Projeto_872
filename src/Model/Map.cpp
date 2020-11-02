@@ -53,12 +53,12 @@ void Map::set_sprites(std::vector<std::shared_ptr<Sprite>> sprites){
 void Map::completed_lines(int n){
 	this->map.erase(this->map.end()-n+1, this->map.end());
 	for(int i = 0; i < n; i++)
-		this->map.push_back(std::vector<int>(width, 0));
+		this->map.insert(this->map.begin(),std::vector<int>(width, 0));
 }
 
 void Map::completed_lines(std::vector<int> lines){
-	for(auto i : lines)
+	for(auto i : lines){
 		this->map.erase(this->map.begin()+i);
-	for(int i = 0; i < lines.size(); i++)
-		this->map.push_back(std::vector<int>(width, 0));
+		this->map.insert(this->map.begin(),std::vector<int>(width, 0));
+	}
 }

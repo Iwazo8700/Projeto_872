@@ -11,6 +11,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <map> 
+#include <algorithm>
 
 class MainController{
 	private:
@@ -26,4 +27,5 @@ class MainController{
 		std::shared_ptr<Bloco> create_random_block(int x, int y, int height, int width, int id, std::shared_ptr<Sprite> sprite);
 		void set_block(int id, std::shared_ptr<Bloco> block);
 		void set_keyboard(int id, std::shared_ptr<Keyboard> keyboard);
+		void update_board();
 };

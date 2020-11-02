@@ -18,6 +18,18 @@ bool MainController::should_move(){
 	return false;
 }
 
+void MainController::update_board(){
+	std::vector<std::vector<int>> format = this->map->get_map();
+	std::vector<int> complete_lines;
+	int i = 0;
+	for(auto line : format){
+		if(std::count(line.begin(),line.end(),0) == 0)
+			complete_lines.push_back(i);
+		i++;
+	}
+	this->map->completed_lines(complete_lines);
+}
+
 void MainController::step(){
 	int tmp;
 	std::shared_ptr<Bloco> tmp_blk;
@@ -42,6 +54,7 @@ void MainController::step(){
 		if(!this->collision->is_colliding(tmp_blk))
 			block.second->set_formato(tmp_blk->get_formato());
 	}
+	this->update_board();
 }
 
 void MainController::set_keyboard(int id, std::shared_ptr<Keyboard> keyboard){
