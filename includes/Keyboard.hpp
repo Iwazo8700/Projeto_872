@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 #include "Bloco.hpp"
+#include "Collision.hpp"
+
 
 /*! \brief
  *
@@ -21,7 +23,9 @@ class Keyboard{
 		SDL_Event evento; // eventos discretos
  		const Uint8* state; // estado do teclado
 		std::shared_ptr<Bloco> bloco;
-
+		bool Rot_atraso = false;
+		bool Desloc_atraso = false;
+		bool Space_atraso = false;
 	public:
 		Keyboard(std::shared_ptr<Bloco> bloco);
 		void set_bloco(std::shared_ptr<Bloco> bloco);
@@ -30,5 +34,7 @@ class Keyboard{
 		int Desloc();
 		std::vector<std::vector<bool>> RotHoraria();
 		std::vector<std::vector<bool>> RotAnti();
+		int Space(std::shared_ptr<Collision> collision);
+		int Down(std::shared_ptr<Collision> collision);
 
 };

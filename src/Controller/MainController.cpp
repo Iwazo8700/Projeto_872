@@ -54,6 +54,10 @@ void MainController::step(){
 		tmp_blk->set_formato(this->movements->find(block.first)->second->Rotation());
 		if(!this->collision->is_colliding(tmp_blk))
 			block.second->set_formato(tmp_blk->get_formato());
+
+		block.second->set_y(this->movements->find(block.first)->second->Space(collision));
+		//std::cout << block.second->get_y() <<std::endl;
+
 	}
 	this->update_board();
 }

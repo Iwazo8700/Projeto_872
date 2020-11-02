@@ -12,9 +12,15 @@ void Keyboard::set_bloco(std::shared_ptr<Bloco> bloco){
 }
 
 std::vector<std::vector<bool>> Keyboard::Rotation(){
+	if(Rot_atraso){
+		Rot_atraso = false;
+		return bloco->get_formato();
+		
+	}
+	Rot_atraso = true;
+	SDL_PumpEvents();
 	if (state[SDL_SCANCODE_UP]) return RotAnti();
 	if (state[SDL_SCANCODE_DOWN]) return RotHoraria();
-	
 	return bloco->get_formato();
 
 
@@ -22,10 +28,30 @@ std::vector<std::vector<bool>> Keyboard::Rotation(){
 
 
 int Keyboard::Desloc(){
+	if(Desloc_atraso){
+		Desloc_atraso = false;
+		return bloco->get_x();
+		
+	}
+	Desloc_atraso = true;
 	SDL_PumpEvents(); // atualiza estado do teclado
 	if (state[SDL_SCANCODE_LEFT]) return bloco->get_x()-1;
 	if (state[SDL_SCANCODE_RIGHT]) return bloco->get_x()+1;
 	return bloco->get_x();
+}
+
+
+int Keyboard::Space(std::shared_ptr<Collision> collision){
+	if(Space_atraso){
+		Space_atraso = false;
+		return bloco->get_y();
+		
+	}
+	Space_atraso = true;
+	SDL_PumpEvents();
+	if(state[SDL_SCANCODE_SPACE]) return Down(collision);
+	return bloco->get_y();
+	
 }
 
 bool Keyboard::Quit(){
@@ -71,6 +97,12 @@ std::vector<std::vector<bool>> Keyboard::RotAnti(){
 }
 
 
+int Keyboard::Down(std::shared_ptr<Collision> collision){
+	while(!collision->is_colliding(bloco))
+		bloco->set_y(bloco->get_y() + 1);
+	//std::cout << bloco->get_y() <<std::endl;
+	return bloco->get_y() - 1;
 
+}
 
 
