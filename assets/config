@@ -1,0 +1,27 @@
+# Altura e largura da tela
+screen_width = 440
+screen_height = 440
+
+# Número de linhas e colunas no mapa
+lines = 20
+columns = 10
+
+# Tempo entre inicial cada queda automática do bloco
+speed = 500
+
+# Distância x e y das bordas da janela para as bordas do tabuleiro
+shift_x = 20
+shift_y = 20
+
+# Tempo de delay entre cada iteração do loop principal
+delay = 40
+
+# Número de linhas para que a velocidade de decida aumente
+number_dec = 10
+
+# Decrécimo no tempo para cada aumento de velocidade
+decrease = 50
+
+# Altura e largura de cada bloco
+#block_size_x = 20
+#block_size_y = 20

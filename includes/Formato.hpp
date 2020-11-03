@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <ctime>
+#include <iostream>
 
 /*! \brief
  *
