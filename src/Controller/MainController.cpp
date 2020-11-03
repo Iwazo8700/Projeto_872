@@ -54,7 +54,7 @@ void MainController::step(){
 				}
 				player->get_piece()->set_y(player->get_piece()->get_y()-1);
 				this->map->add_to_map(player->get_piece(),1);
-				player->set_piece(this->create_random_block(0,-5,20,20, player->get_piece()->get_sprite()));
+				player->set_piece(this->create_random_block(this->map->get_map()[0].size()/2,-5,player->get_piece()->get_height(),player->get_piece()->get_width(), player->get_piece()->get_sprite()));
 				switch(this->update_board()){
 					case 1:
 						player->add_points(40);
@@ -92,5 +92,5 @@ void MainController::set_players(std::vector<std::shared_ptr<Player>> players){
 
 std::shared_ptr<Bloco> MainController::create_random_block(int x, int y, int height, int width, std::shared_ptr<Sprite> sprite){
 	std::vector<std::vector<bool>> vec = this->formats->get_random();
-	return (std::shared_ptr<Bloco>) new Bloco(x, y, vec, sprite, height, width);
+	return (std::shared_ptr<Bloco>) new Bloco(x, -1*vec.size(), vec, sprite, height, width);
 }
