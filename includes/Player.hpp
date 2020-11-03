@@ -17,6 +17,7 @@ class Player{
 		std::shared_ptr<Keyboard> keyboard; /*<! Keyboard com o controle do Player*/
 		int points; /*<! Pontuação do Player*/
 		int speed; /*<! Tempo em ms para a peça cair automáticamente uma posição*/
+		int lines_completed; /*<! Número de linhas completas até o momento*/
 		unsigned int time; /*<! Guarda o tempo última vez que a peça caiu uma posição automaticamente*/
 		bool alive; /*<! Variável que indica se o Player perdeu o jogo ou não*/
 	public:
@@ -50,6 +51,9 @@ class Player{
 		std::shared_ptr<Keyboard> get_keyboard();
 		int get_points();
 		int get_speed();
+		void set_speed(int speed);
+		int get_lines_completed();
+		void set_lines_completed(int lines);
 		unsigned int get_time();
 		/*! Retorna se o Player está vivo ainda ou não
 		*

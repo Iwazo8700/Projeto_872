@@ -42,7 +42,7 @@ bool MainController::is_dead(std::shared_ptr<Player> player){
 }
 
 void MainController::step(){
-	int tmp;
+	int tmp,points=0;
 	std::shared_ptr<Bloco> tmp_blk;
 	for(auto player : this->players){
 		if(should_move(player) && player->is_alive()){
@@ -55,7 +55,8 @@ void MainController::step(){
 				player->get_piece()->set_y(player->get_piece()->get_y()-1);
 				this->map->add_to_map(player->get_piece(),1);
 				player->set_piece(this->create_random_block(this->map->get_map()[0].size()/2,-5,player->get_piece()->get_height(),player->get_piece()->get_width(), player->get_piece()->get_sprite()));
-				switch(this->update_board()){
+				points = this->update_board();
+				switch(points){
 					case 1:
 						player->add_points(40);
 						break;
@@ -69,6 +70,7 @@ void MainController::step(){
 						player->add_points(1200);
 						break;
 				}
+				player->set_lines_completed(player->get_lines_completed() + points);
 				continue;
 			}
 		}

@@ -12,6 +12,10 @@ Player::Player(std::shared_ptr<Bloco> piece, std::shared_ptr<Keyboard> keyboard,
 void Player::kill(){
 	this->alive = false;
 }
+		
+void Player::set_speed(int speed){
+	this->speed = speed;
+}
 
 void Player::set_piece(std::shared_ptr<Bloco> piece){
 	this->piece = piece;
@@ -56,4 +60,12 @@ void Player::set_time(unsigned int time){
 
 unsigned int Player::get_time(){
 	return this->time;
+}
+
+int Player::get_lines_completed(){
+	return this->lines_completed;
+}
+
+void Player::set_lines_completed(int lines){
+	this->lines_completed = lines;
 }

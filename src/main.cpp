@@ -25,6 +25,7 @@
 #define SHIFT_Y 20
 
 int main(){
+	const int speeds[] = {500,450,400,350,300,250,200,150,100};
 	//std::vector<std::vector<bool>> vec(4, std::vector<bool>(4, true));
 	std::shared_ptr<Formato> format (new Formato("../assets/Formatos.dat"));
 	std::shared_ptr<SDL_Model> sdl (new SDL_Model(SCREEN_W,SCREEN_H));
@@ -44,7 +45,7 @@ int main(){
 	map->set_sprites(vecin);
 
 	std::shared_ptr<Keyboard> key (new Keyboard(block));
-	std::shared_ptr<Player> player (new Player(block, key, 500));
+	std::shared_ptr<Player> player (new Player(block, key, speeds[0]));
 	std::vector<std::shared_ptr<Player>> player_vec;
 	player_vec.push_back(player);
 	std::shared_ptr<MainController> ctrl (new MainController(map, player_vec, format));
@@ -66,6 +67,8 @@ int main(){
 
 		prints.insert(prints.begin(),img);
 		view->render(prints);
+	
+		player_vec[0]->set_speed(speeds[player_vec[0]->get_lines_completed()/10]);
 		SDL_Delay(50);		
 	}
 	
