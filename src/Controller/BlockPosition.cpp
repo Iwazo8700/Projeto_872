@@ -66,7 +66,7 @@ std::vector<std::shared_ptr<Image>> BlockPosition::create_score_image(int num, i
 	int points = num;
 	int i;
 
-	for(i = 0; i < 6; i++,points=points/10)
+	for(i = 5; i >= 0; i--,points=points/10)
 		prints.push_back(std::shared_ptr<Image>(new Image(x_0+i*size,y_0,size,size, this->numbers[points%10])));
 	return prints;
 }
