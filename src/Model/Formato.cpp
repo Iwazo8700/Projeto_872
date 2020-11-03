@@ -2,6 +2,7 @@
 
 
 Formato::Formato(char const *dir){
+	srand(time(NULL)); // Inicia o gerador de numeros aleatorios com uma seed (tempo atual)
 	std::ifstream MyReadFile(dir);
 	std::string line;
 	std::vector<std::vector<bool>> format;
