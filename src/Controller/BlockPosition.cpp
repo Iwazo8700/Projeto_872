@@ -1,9 +1,18 @@
 #include "BlockPosition.hpp"
-#include <iostream>
 
-BlockPosition::BlockPosition(int x, int y){
+BlockPosition::BlockPosition(int x, int y, std::shared_ptr<SDL_Model> sdl){
 	this->x_begin = x;
 	this->y_begin = y;
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/0.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/1.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/2.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/3.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/4.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/5.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/6.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/7.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/8.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/9.png",sdl)));
 }
 
 std::vector<std::shared_ptr<Image>> BlockPosition::create_image_vector(std::shared_ptr<Bloco> block){
@@ -50,4 +59,14 @@ std::vector<std::shared_ptr<Image>> BlockPosition::create_image_vector(std::shar
 	}
 	
 	return images;
+}
+
+std::vector<std::shared_ptr<Image>> BlockPosition::create_score_image(int num, int x_0, int y_0, int size){
+	std::vector<std::shared_ptr<Image>> prints;
+	int points = num;
+	int i;
+
+	for(i = 0; i < 6; i++,points=points/10)
+		prints.push_back(std::shared_ptr<Image>(new Image(x_0+i*size,y_0,size,size, this->numbers[points%10])));
+	return prints;
 }
