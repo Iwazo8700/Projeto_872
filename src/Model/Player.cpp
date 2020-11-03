@@ -5,6 +5,7 @@ Player::Player(std::shared_ptr<Bloco> piece, std::shared_ptr<Keyboard> keyboard,
 	this->keyboard = keyboard; 
 	this->speed = speed;
 	this->points = 0;
+	this->lines_completed = 0;
 	this->time = 0;
 	this->alive = true;
 }
