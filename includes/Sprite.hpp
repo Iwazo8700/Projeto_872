@@ -8,14 +8,14 @@
 /*! \brief
 *
 * Classe Sprite
-* Model responsável por armazenar sprites SDL 
+* Model responsável por armazenar sprites SDL (texturas)
 *
 * */
 
 class Sprite{
 	private:
-		SDL_Texture *texture;
-		std::shared_ptr<SDL_Model> sdl;
+		SDL_Texture *texture; /*<! Ponteiro para a textura SDL*/
+		std::shared_ptr<SDL_Model> sdl; /*<! SDL_Model contendo os parâmetros já inicializados do SDL*/
 	public:
 		/*! \brief Construtor do Sprite
 		*

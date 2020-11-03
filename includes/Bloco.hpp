@@ -9,22 +9,26 @@
 /*! \brief
 *
 * Classe Bloco
-* Model responsável por armazenar os dados de um bloco, 
+* Model responsável por armazenar os dados de uma peça, 
 * guardando seu sprite, sua forma e sua posição
 * */
 
 class Bloco {
 	private:
-		int x,y,height,width; /*!< Posição do bloco relativo ao mapa e o tamanho de cada bloco*/
+		int x; /*!< Coluna da peça relativa ao mapa*/
+		int y; /*!< Linha da peça relativa ao mapa*/
+		int height; /*!< Altura de cada bloco da peça (em px)*/
+		int width;  /*!< Largura de cada bloco da peça (em px)*/
 		std::vector<std::vector<bool>> formato; /*!< Matriz representando a forma do bloco*/
 		std::shared_ptr<Sprite> sprite; /*!< Shared Pointer para Sprite (previamente alocado) que será usada para renderizar o bloco*/
 
 	public:
 		/*! \brief Construtor do Bloco
 		*
-		* Deve receber um char representando o formato do Bloco, 
-		* dois ints representando sua posição relativa no mapa e
+		* Deve receber dois ints representando sua posição relativa no mapa,
+		* uma vector de vector representando o formato da peça, 
 		* um shared_ptr para um Sprite que será usado para renderiza-lo
+		* e dois ints representando a altura e largura de cada bloco
 		*
 		* \param std::vector<std::vector<bool>> Um formato para a peça
 		* \param int x, y Coordenadas iniciais relativas ao mapa

@@ -19,7 +19,7 @@ class SDL_Model{
 		/*! \brief Construtor da SDL_Model
 		*
 		* Deve receber a largura e a altura da tela.
-		* Inicializa o SDL.
+		* Inicializa o SDL (renderer e window).
 		*
 		* \param int width
 		* \param int height
