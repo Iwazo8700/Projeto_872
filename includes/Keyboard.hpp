@@ -26,9 +26,9 @@ class Keyboard{
 		bool Rot_atraso = false;
 		bool Desloc_atraso = false;
 		bool Space_atraso = false;
-		int time_des,time_ver,time_rot,time_space,delay;
+		int time_des,time_ver,time_rot,time_space,delay,num_lines;
 	public:
-		Keyboard(std::shared_ptr<Bloco> bloco, int delay);
+		Keyboard(std::shared_ptr<Bloco> bloco, int delay, int num_lines);
 		void set_bloco(std::shared_ptr<Bloco> bloco);
 		std::vector<std::vector<bool>> Rotation();
 		bool Quit();

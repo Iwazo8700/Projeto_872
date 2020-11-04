@@ -28,3 +28,6 @@ decrease = 50
 # Altura e largura de cada bloco
 #block_size_x = 20
 #block_size_y = 20
+
+# Número de linhas que o bloco desce a cada clique
+num_down = 2

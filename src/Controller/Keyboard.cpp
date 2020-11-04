@@ -2,7 +2,7 @@
 
 
 
-Keyboard::Keyboard(std::shared_ptr<Bloco> bloco, int delay = 40){
+Keyboard::Keyboard(std::shared_ptr<Bloco> bloco, int delay = 40, int num_lines=1){
 	this->state = SDL_GetKeyboardState(nullptr); // estado do teclado
 	this->bloco = bloco;
 	this->time_des = 0;
@@ -10,6 +10,7 @@ Keyboard::Keyboard(std::shared_ptr<Bloco> bloco, int delay = 40){
 	this->time_ver = 0;
 	this->time_space = 0;
 	this->delay = delay;
+	this->num_lines = num_lines;
 }
 
 void Keyboard::set_bloco(std::shared_ptr<Bloco> bloco){
@@ -19,12 +20,6 @@ void Keyboard::set_bloco(std::shared_ptr<Bloco> bloco){
 std::vector<std::vector<bool>> Keyboard::Rotation(){
 	if(this->time_rot+this->delay<=SDL_GetTicks()){
 		this->time_rot = SDL_GetTicks();
-		/*if(Rot_atraso){
-			Rot_atraso = false;
-			return bloco->get_formato();
-			
-		}
-		Rot_atraso = true;*/
 		SDL_PumpEvents();
 		if (state[SDL_SCANCODE_UP]) return RotAnti();
 		if (state[SDL_SCANCODE_DOWN]) return RotHoraria();
@@ -38,12 +33,6 @@ std::vector<std::vector<bool>> Keyboard::Rotation(){
 int Keyboard::Desloc(){
 	if(this->time_des+this->delay<=SDL_GetTicks()){
 		this->time_des = SDL_GetTicks();
-		/*if(Desloc_atraso){
-			Desloc_atraso = false;
-			return bloco->get_x();
-			
-		}
-		Desloc_atraso = true;*/
 		SDL_PumpEvents(); // atualiza estado do teclado
 		if (state[SDL_SCANCODE_LEFT]) return bloco->get_x()-1;
 		if (state[SDL_SCANCODE_RIGHT]) return bloco->get_x()+1;
@@ -54,44 +43,28 @@ int Keyboard::Desloc(){
 int Keyboard::Desloc_Vert(){
 	if(this->time_ver+this->delay<=SDL_GetTicks()){
 		this->time_ver = SDL_GetTicks();
-		/*if(Desloc_atraso){
-			Desloc_atraso = false;
-			return bloco->get_x();
-			
-		}
-		Desloc_atraso = true;*/
 		SDL_PumpEvents(); // atualiza estado do teclado
-		if (state[SDL_SCANCODE_S]) return bloco->get_y()+1;
+		if (state[SDL_SCANCODE_S]) return bloco->get_y()+this->num_lines;
 	}
 	return bloco->get_y();
 }
 
 int Keyboard::Space(std::shared_ptr<Collision> collision){
 	if(this->time_space+this->delay <= SDL_GetTicks()){
-	/*if(Space_atraso){
-		Space_atraso = false;
-		return bloco->get_y();
-		
-	}
-	Space_atraso = true;*/
+		this->time_space = SDL_GetTicks();
 		SDL_PumpEvents();
-		if(state[SDL_SCANCODE_SPACE]) return Down(collision);
+		if(state[SDL_SCANCODE_SPACE]) {
+			Down(collision);
+			return 1;
+		}
 	}
-	return bloco->get_y();
+	return 0;
 	
 }
 
 bool Keyboard::Quit(){
 	while (SDL_PollEvent(&evento)){ 
     		if (evento.type == SDL_QUIT) return true;
-		//if(evento.type == SDL_KEYUP) RotHoraria(bloco); 
-      		//if(evento.type == SDL_KEYDOWN) RotAnti(bloco);
-		// Exemplos de outros eventos.
-      		// Que outros eventos poderiamos ter e que sao uteis?
-      		//if (evento.type == SDL_KEYDOWN) {
-      		//}
-      		//if (evento.type == SDL_MOUSEBUTTONDOWN) {
-      		//}
     	}
 	return false;
 }
@@ -126,9 +99,9 @@ std::vector<std::vector<bool>> Keyboard::RotAnti(){
 
 int Keyboard::Down(std::shared_ptr<Collision> collision){
 	while(!collision->is_colliding(bloco))
-		bloco->set_y(bloco->get_y() + 1);
-	//std::cout << bloco->get_y() <<std::endl;
-	return bloco->get_y() - 1;
+		this->bloco->set_y(this->bloco->get_y() + 1);
+	this->bloco->set_y(this->bloco->get_y() - 1);
+	return this->bloco->get_y() - 1;
 
 }
 

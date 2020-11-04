@@ -19,6 +19,7 @@ class ConfigReader{
 		int block_size_x; /*<! Largura do bloco em px*/
 		int block_size_y; /*<! Altura do bloco em px*/
 		int lines; /*<! Número de linhas no mapa*/
+		int num_lines; /*<! Número de linhas que o bloco desce a cada clique*/
 		int columns; /*<! Número de colunas no mapa*/
 		int speed; /*<! Velocidade inicial do player*/
 		int shift_x; /*<! Distância em px do mapa à borda lateral da tela*/
@@ -39,7 +40,8 @@ class ConfigReader{
 		ConfigReader(const char* config_file);
 		int get_screen_width();	
 		int get_screen_height();	
-		int get_lines();	
+		int get_lines();
+		int get_num_lines();	
 		int get_keyboard_time();	
 		int get_block_size_x();	
 		int get_block_size_y();	

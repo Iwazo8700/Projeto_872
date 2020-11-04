@@ -30,6 +30,7 @@ int main(){
 	int BLOCK_SIZE_X = config->get_block_size_x();
 	int BLOCK_SIZE_Y = config->get_block_size_y();
 	int LINES = config->get_lines();
+	int num_lines = config->get_num_lines();
 	int COLUMNS = config->get_columns();
 	int SHIFT_X = config->get_shift_x();
 	int SHIFT_Y = config->get_shift_y();
@@ -51,7 +52,7 @@ int main(){
 	vecin.push_back(sprite2);
 	map->set_sprites(vecin);
 
-	std::shared_ptr<Keyboard> key (new Keyboard(block, keyboard_time));
+	std::shared_ptr<Keyboard> key (new Keyboard(block, keyboard_time, num_lines));
 	std::shared_ptr<Player> player (new Player(block, key, speed));
 	std::vector<std::shared_ptr<Player>> player_vec;
 	player_vec.push_back(player);

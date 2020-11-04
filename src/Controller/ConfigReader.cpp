@@ -13,6 +13,7 @@ ConfigReader::ConfigReader(const char* config_file){
 	this->screen_width=440; 
 	this->screen_height=440;
 	this->lines=20; 
+	this->lines=1; 
 	this->columns=10; 
 	this->speed=500; 
 	this->delay=20; 
@@ -29,6 +30,8 @@ ConfigReader::ConfigReader(const char* config_file){
 			this->screen_height = this->get_value(text);
 		else if(text.find("lines") != std::string::npos)
 			this->lines = this->get_value(text);
+		else if(text.find("num_down") != std::string::npos)
+			this->num_lines = this->get_value(text);
 		else if(text.find("columns") != std::string::npos)
 			this->columns = this->get_value(text);
 		else if(text.find("speed") != std::string::npos)
@@ -88,6 +91,10 @@ int ConfigReader::get_screen_height(){
 	
 int ConfigReader::get_lines(){
 	return this->lines;
+}
+
+int ConfigReader::get_num_lines(){
+	return this->num_lines;
 }
 
 int ConfigReader::get_block_size_x(){
