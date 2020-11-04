@@ -310,12 +310,12 @@ CMakeFiles/doc.dir/clean:
 CMakeFiles/Sirtet.dir/all: CMakeFiles/Piece.dir/all
 CMakeFiles/Sirtet.dir/all: CMakeFiles/Player.dir/all
 CMakeFiles/Sirtet.dir/all: CMakeFiles/Sprites.dir/all
-CMakeFiles/Sirtet.dir/all: CMakeFiles/SDL_Funcs.dir/all
-CMakeFiles/Sirtet.dir/all: CMakeFiles/Formatos.dir/all
 CMakeFiles/Sirtet.dir/all: CMakeFiles/View.dir/all
 CMakeFiles/Sirtet.dir/all: CMakeFiles/BlockController.dir/all
-CMakeFiles/Sirtet.dir/all: CMakeFiles/Map.dir/all
 CMakeFiles/Sirtet.dir/all: CMakeFiles/Image.dir/all
+CMakeFiles/Sirtet.dir/all: CMakeFiles/Map.dir/all
+CMakeFiles/Sirtet.dir/all: CMakeFiles/Formatos.dir/all
+CMakeFiles/Sirtet.dir/all: CMakeFiles/SDL_Funcs.dir/all
 CMakeFiles/Sirtet.dir/all: CMakeFiles/Config.dir/all
 CMakeFiles/Sirtet.dir/all: CMakeFiles/Keyboard.dir/all
 CMakeFiles/Sirtet.dir/all: CMakeFiles/Collisions.dir/all

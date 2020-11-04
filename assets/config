@@ -31,3 +31,16 @@ decrease = 50
 
 # Número de linhas que o bloco desce a cada clique
 num_down = 2
+
+# Grossura das linhas do mapa
+thickness = 4
+
+# Cores das linhas do mapa
+line_r = 255
+line_g = 255
+line_b = 255
+
+# Cores do bloco
+block_r = 0
+block_g = 0
+block_b = 255

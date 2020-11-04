@@ -35,5 +35,21 @@ class SDL_Model{
 		* \return Nada (este é um construtor!)
 		* */
 		~SDL_Model();
+		/* \brief Cria uma textura com as linhas e colunas para o mapa
+		*
+		*
+		* \param int num_lines, num_columns Número de linhas e colunas para o mapa
+		* \param int block_width, block_height Tamanho de cada quadrado do mapa 
+		* \param thickness Grossura de cada linha (opcional)
+		* \param r,g,b Valores r,g,b para a cor da linha no mapa (opcional)
+		* \return SDL_Texture* textura do mapa
+		*/
+		SDL_Texture* create_map_texture(int num_lines, int num_columns, int block_width, int block_height, int thickness, int r, int g, int b);
+		/* \brief Cria uma textura para o bloco
+		* \param int block_width, block_height Tamanho do bloco (em px)
+		* \param r,g,b Valores r,g,b para a cor do bloco (opcional)
+		* \return SDL_Texture* textura do bloco
+		*/
+		SDL_Texture* create_block_texture(int block_width, int block_height, int r, int g, int b);
 		SDL_Renderer* get_renderer();	
 };

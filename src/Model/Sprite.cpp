@@ -1,8 +1,9 @@
 #include "Sprite.hpp"
 
-Sprite::Sprite(char const *dir, std::shared_ptr<SDL_Model> sdl){
+Sprite::Sprite(std::shared_ptr<SDL_Model> sdl, char const *dir=""){
 	this->sdl = sdl;
-	this->texture = IMG_LoadTexture(this->sdl->get_renderer(), dir);
+	if(dir != "")
+		this->texture = IMG_LoadTexture(this->sdl->get_renderer(), dir);
 }
 
 Sprite::~Sprite(){
@@ -11,6 +12,10 @@ Sprite::~Sprite(){
 
 void Sprite::set_image(char const *dir){
 	this->texture = IMG_LoadTexture(this->sdl->get_renderer(), dir);
+}
+
+void Sprite::set_texture(SDL_Texture *texture){
+	this->texture = texture;
 }
 
 SDL_Texture* Sprite::get_texture(){

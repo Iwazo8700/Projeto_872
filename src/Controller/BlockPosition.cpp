@@ -3,16 +3,16 @@
 BlockPosition::BlockPosition(int x, int y, std::shared_ptr<SDL_Model> sdl){
 	this->x_begin = x;
 	this->y_begin = y;
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/0.png",sdl)));
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/1.png",sdl)));
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/2.png",sdl)));
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/3.png",sdl)));
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/4.png",sdl)));
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/5.png",sdl)));
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/6.png",sdl)));
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/7.png",sdl)));
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/8.png",sdl)));
-	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite("../assets/9.png",sdl)));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/0.png")));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/1.png")));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/2.png")));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/3.png")));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/4.png")));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/5.png")));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/6.png")));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/7.png")));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/8.png")));
+	this->numbers.push_back(std::shared_ptr<Sprite>(new Sprite(sdl,"../assets/9.png")));
 }
 
 std::vector<std::shared_ptr<Image>> BlockPosition::create_image_vector(std::shared_ptr<Bloco> block){
