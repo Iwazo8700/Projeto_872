@@ -26,6 +26,7 @@ class ConfigReader{
 		int delay; /*<! Delay entre cada iteração do loop principal*/
 		int decrease; /*<! Decremento da velocidade para cada n blocos completo*/
 		int decrease_n; /*<! Número de linhas completas para decrementar a velocidade*/
+		int keyboard_time; /*<! Tempo mínimo entre 2 cliques do teclado*/
 		int get_value(std::string text); /*<! Retorna o int dentro da string text*/
 	public:
 		/*! Construtor da classe ConfigReader
@@ -39,6 +40,7 @@ class ConfigReader{
 		int get_screen_width();	
 		int get_screen_height();	
 		int get_lines();	
+		int get_keyboard_time();	
 		int get_block_size_x();	
 		int get_block_size_y();	
 		int get_columns();	

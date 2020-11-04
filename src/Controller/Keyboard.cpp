@@ -2,9 +2,13 @@
 
 
 
-Keyboard::Keyboard(std::shared_ptr<Bloco> bloco){
+Keyboard::Keyboard(std::shared_ptr<Bloco> bloco, int delay = 40){
 	this->state = SDL_GetKeyboardState(nullptr); // estado do teclado
 	this->bloco = bloco;
+	this->time_des = 0;
+	this->time_rot = 0;
+	this->time_ver = 0;
+	this->delay = delay;
 }
 
 void Keyboard::set_bloco(std::shared_ptr<Bloco> bloco){
@@ -12,15 +16,18 @@ void Keyboard::set_bloco(std::shared_ptr<Bloco> bloco){
 }
 
 std::vector<std::vector<bool>> Keyboard::Rotation(){
-	if(Rot_atraso){
-		Rot_atraso = false;
-		return bloco->get_formato();
-		
+	if(this->time_rot+this->delay<=SDL_GetTicks()){
+		this->time_rot = SDL_GetTicks();
+		/*if(Rot_atraso){
+			Rot_atraso = false;
+			return bloco->get_formato();
+			
+		}
+		Rot_atraso = true;*/
+		SDL_PumpEvents();
+		if (state[SDL_SCANCODE_UP]) return RotAnti();
+		if (state[SDL_SCANCODE_DOWN]) return RotHoraria();
 	}
-	Rot_atraso = true;
-	SDL_PumpEvents();
-	if (state[SDL_SCANCODE_UP]) return RotAnti();
-	if (state[SDL_SCANCODE_DOWN]) return RotHoraria();
 	return bloco->get_formato();
 
 
@@ -28,18 +35,35 @@ std::vector<std::vector<bool>> Keyboard::Rotation(){
 
 
 int Keyboard::Desloc(){
-	if(Desloc_atraso){
-		Desloc_atraso = false;
-		return bloco->get_x();
-		
+	if(this->time_des+this->delay<=SDL_GetTicks()){
+		this->time_des = SDL_GetTicks();
+		/*if(Desloc_atraso){
+			Desloc_atraso = false;
+			return bloco->get_x();
+			
+		}
+		Desloc_atraso = true;*/
+		SDL_PumpEvents(); // atualiza estado do teclado
+		if (state[SDL_SCANCODE_LEFT]) return bloco->get_x()-1;
+		if (state[SDL_SCANCODE_RIGHT]) return bloco->get_x()+1;
 	}
-	Desloc_atraso = true;
-	SDL_PumpEvents(); // atualiza estado do teclado
-	if (state[SDL_SCANCODE_LEFT]) return bloco->get_x()-1;
-	if (state[SDL_SCANCODE_RIGHT]) return bloco->get_x()+1;
 	return bloco->get_x();
 }
 
+int Keyboard::Desloc_Vert(){
+	if(this->time_ver+this->delay<=SDL_GetTicks()){
+		this->time_ver = SDL_GetTicks();
+		/*if(Desloc_atraso){
+			Desloc_atraso = false;
+			return bloco->get_x();
+			
+		}
+		Desloc_atraso = true;*/
+		SDL_PumpEvents(); // atualiza estado do teclado
+		if (state[SDL_SCANCODE_S]) return bloco->get_y()+1;
+	}
+	return bloco->get_y();
+}
 
 int Keyboard::Space(std::shared_ptr<Collision> collision){
 	if(Space_atraso){

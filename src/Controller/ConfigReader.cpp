@@ -8,7 +8,17 @@ ConfigReader::ConfigReader(const char* config_file){
 	this->shift_x = -1;
 	this->shift_y = -1;
 	this->block_size_x = -1;	
-	this->block_size_y = -1;	
+	this->block_size_y = -1;
+
+	this->screen_width=440; 
+	this->screen_height=440;
+	this->lines=20; 
+	this->columns=10; 
+	this->speed=500; 
+	this->delay=20; 
+	this->decrease=50;
+	this->decrease_n=10;
+	this->keyboard_time=50;
 
 	while(getline(file, text)){
 		if(text.size() == 0 || text.at(0) == '#')
@@ -29,6 +39,8 @@ ConfigReader::ConfigReader(const char* config_file){
 			this->shift_y = this->get_value(text);
 		else if(text.find("delay") != std::string::npos)
 			this->delay = this->get_value(text);
+		else if(text.find("keyboard_time") != std::string::npos)
+			this->keyboard_time = this->get_value(text);
 		else if(text.find("decrease") != std::string::npos)
 			this->decrease = this->get_value(text);
 		else if(text.find("number_dec") != std::string::npos)
@@ -46,6 +58,10 @@ ConfigReader::ConfigReader(const char* config_file){
 		this->shift_x = this->block_size_x;
 	if(this->shift_y == -1)
 		this->shift_y = this->block_size_y;
+}
+
+int ConfigReader::get_keyboard_time(){
+	return this->keyboard_time;
 }
 
 int ConfigReader::get_decrease(){

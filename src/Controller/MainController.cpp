@@ -84,6 +84,37 @@ void MainController::step(){
 		if(!this->collision->is_colliding(tmp_blk))
 			player->get_piece()->set_formato(tmp_blk->get_formato());
 
+		tmp = player->get_piece()->get_y();
+		player->get_piece()->set_y(player->get_keyboard()->Desloc_Vert());
+		if(this->collision->is_colliding(player->get_piece())){
+			if(is_dead(player)){
+				player->kill();
+				continue;
+			}
+
+			player->get_piece()->set_y(tmp);
+
+			this->map->add_to_map(player->get_piece(),1);
+			player->set_piece(this->create_random_block(this->map->get_map()[0].size()/2,-5,player->get_piece()->get_height(),player->get_piece()->get_width(), player->get_piece()->get_sprite()));
+			points = this->update_board();
+			switch(points){
+				case 1:
+					player->add_points(40);
+					break;
+				case 2:
+					player->add_points(100);
+					break;
+				case 3:
+					player->add_points(300);
+					break;
+				case 4:
+					player->add_points(1200);
+					break;
+			}
+			player->set_lines_completed(player->get_lines_completed() + points);
+			continue;
+		}
+
 		player->get_piece()->set_y(player->get_keyboard()->Space(this->collision));
 	}
 }

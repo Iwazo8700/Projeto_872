@@ -14,7 +14,10 @@ shift_x = 20
 shift_y = 20
 
 # Tempo de delay entre cada iteração do loop principal
-delay = 40
+delay = 20
+
+# Tempo mínimo entre dois clicks do teclado
+keyboard_time = 90
 
 # Número de linhas para que a velocidade de decida aumente
 number_dec = 10

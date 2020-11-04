@@ -26,8 +26,9 @@ class Keyboard{
 		bool Rot_atraso = false;
 		bool Desloc_atraso = false;
 		bool Space_atraso = false;
+		int time_des,time_ver,time_rot,delay;
 	public:
-		Keyboard(std::shared_ptr<Bloco> bloco);
+		Keyboard(std::shared_ptr<Bloco> bloco, int delay);
 		void set_bloco(std::shared_ptr<Bloco> bloco);
 		std::vector<std::vector<bool>> Rotation();
 		bool Quit();
@@ -35,6 +36,7 @@ class Keyboard{
 		std::vector<std::vector<bool>> RotHoraria();
 		std::vector<std::vector<bool>> RotAnti();
 		int Space(std::shared_ptr<Collision> collision);
+		int Desloc_Vert();
 		int Down(std::shared_ptr<Collision> collision);
 
 };

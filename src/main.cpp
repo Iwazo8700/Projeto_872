@@ -22,6 +22,7 @@ int main(){
 
 	int speed = config->get_speed();
 	int delay = config->get_delay();
+	int keyboard_time = config->get_keyboard_time();
 	int decrease = config->get_decrease();
 	int decrease_n = config->get_decrease_n();
 	int SCREEN_W = config->get_screen_width();
@@ -50,7 +51,7 @@ int main(){
 	vecin.push_back(sprite2);
 	map->set_sprites(vecin);
 
-	std::shared_ptr<Keyboard> key (new Keyboard(block));
+	std::shared_ptr<Keyboard> key (new Keyboard(block, keyboard_time));
 	std::shared_ptr<Player> player (new Player(block, key, speed));
 	std::vector<std::shared_ptr<Player>> player_vec;
 	player_vec.push_back(player);
