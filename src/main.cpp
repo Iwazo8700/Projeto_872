@@ -58,11 +58,13 @@ int main(){
 	std::shared_ptr<Player> player (new Player(block, key, speed));
 	std::vector<std::shared_ptr<Player>> player_vec;
 	player_vec.push_back(player);
-	std::shared_ptr<MainController> ctrl (new MainController(map, player_vec, format));
-
 	std::shared_ptr<Image> score (new Image(BLOCK_SIZE_X*(COLUMNS*3/2),2*BLOCK_SIZE_Y,4*BLOCK_SIZE_X,2*BLOCK_SIZE_Y,sprite3));
 	std::shared_ptr<IA> ia(new IA(player, -0.510066, 0.760666, -0.35663, -0.184483));
 	std::shared_ptr<IAFunctions> iafunctions (new IAFunctions(ia, map, collision));
+	std::vector<std::shared_ptr<IAFunctions>> iafunc_vec;
+	iafunc_vec.push_back(iafunctions);
+	std::shared_ptr<MainController> ctrl (new MainController(map, player_vec, format, iafunc_vec));
+
 	bool normal = false; 
 	if(normal){
 	while(1){
@@ -98,7 +100,7 @@ int main(){
 	}else{
 	while(1){
 		if(key->Quit()) break;
-		ctrl->IAstep(iafunctions);
+		ctrl->IAstep();
 		if(!iafunctions->get_IA()->get_player()->is_alive())
 			break;
 		

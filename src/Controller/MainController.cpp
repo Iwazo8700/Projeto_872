@@ -1,11 +1,12 @@
 #include "MainController.hpp"
 		
-MainController::MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato){
+MainController::MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec){
 	this->map = map;
 	this->players = players;
 	std::shared_ptr<Collision> col (new Collision(this->map));
 	this->collision = col;
 	this->formats = formato;
+	this->iafunc_vec = iafunc_vec;
 }
 
 bool MainController::should_move(std::shared_ptr<Player> player){
@@ -104,38 +105,41 @@ std::shared_ptr<Bloco> MainController::create_random_block(int x, int y, int hei
 }
 
 
-void MainController::IAstep(std::shared_ptr<IAFunctions> iafunctions){
+void MainController::IAstep(){
 	int points=0;
-	std::shared_ptr<Player> ia_player = iafunctions->get_IA()->get_player();	
-	if(should_move(ia_player) && ia_player->is_alive()){
-		ia_player->get_piece()->set_y(ia_player->get_piece()->get_y()+1);
-		if(this->collision->is_colliding(ia_player->get_piece())){
-			if(is_dead(ia_player)){
-				ia_player->kill();
-			}
-			ia_player->get_piece()->set_y(ia_player->get_piece()->get_y()-1);
-			this->map->add_to_map(ia_player->get_piece(),1);
-			ia_player->set_piece(this->create_random_block(this->map->get_map()[0].size()/2,-5,ia_player->get_piece()->get_height(),ia_player->get_piece()->get_width(), ia_player->get_piece()->get_sprite()));
-			points = this->update_board();
-			switch(points){
-				case 1:
-					ia_player->add_points(40);
-					break;
-				case 2:
-					ia_player->add_points(100);
-					break;
-				case 3:
-					ia_player->add_points(300);
-					break;
-				case 4:
-					ia_player->add_points(1200);
-					break;
+	std::shared_ptr<Player> ia_player;
+	for(auto iafunctions : this->iafunc_vec){
+		ia_player = iafunctions->get_IA()->get_player();
+		if(should_move(ia_player) && ia_player->is_alive()){
+			ia_player->get_piece()->set_y(ia_player->get_piece()->get_y()+1);
+			if(this->collision->is_colliding(ia_player->get_piece())){
+				if(is_dead(ia_player)){
+					ia_player->kill();
 				}
-			ia_player->set_lines_completed(ia_player->get_lines_completed() + points);
+				ia_player->get_piece()->set_y(ia_player->get_piece()->get_y()-1);
+				this->map->add_to_map(ia_player->get_piece(),1);
+				ia_player->set_piece(this->create_random_block(this->map->get_map()[0].size()/2,-5,ia_player->get_piece()->get_height(),ia_player->get_piece()->get_width(), ia_player->get_piece()->get_sprite()));
+				points = this->update_board();
+				switch(points){
+					case 1:
+						ia_player->add_points(40);
+						break;
+					case 2:
+						ia_player->add_points(100);
+						break;
+					case 3:
+						ia_player->add_points(300);
+						break;
+					case 4:
+						ia_player->add_points(1200);
+						break;
+					}
+				ia_player->set_lines_completed(ia_player->get_lines_completed() + points);
+				}
 			}
-		}
 		//std::cout << "cheguei aqui" << std::endl;
-		ia_player->set_piece(iafunctions->TestAll());
+			ia_player->set_piece(iafunctions->TestAll());
+	}
 }
 
 
