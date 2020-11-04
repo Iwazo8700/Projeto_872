@@ -1,0 +1,1 @@
+/usr/bin/c++  -std=c++0x -rdynamic CMakeFiles/Sirtet.dir/src/main.cpp.o -o Sirtet  libSprites.a libPiece.a libMap.a libSDL_Funcs.a libFormatos.a libBlockController.a libView.a libImage.a libCollisions.a libKeyboard.a libMain.a libPlayer.a libConfig.a -lSDL2 -lSDL2_image 
