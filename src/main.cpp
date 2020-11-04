@@ -16,6 +16,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <chrono>
 
 int main(){
 	std::shared_ptr<ConfigReader> config (new ConfigReader("../assets/config"));
@@ -61,6 +62,8 @@ int main(){
 	vecin.push_back(sprite2);
 	map->set_sprites(vecin);
 
+	
+
 	std::shared_ptr<Keyboard> key (new Keyboard(block, keyboard_time, num_lines));
 	std::shared_ptr<Player> player (new Player(block, key, speed));
 	std::vector<std::shared_ptr<Player>> player_vec;
@@ -68,8 +71,10 @@ int main(){
 	std::shared_ptr<MainController> ctrl (new MainController(map, player_vec, format));
 
 	std::shared_ptr<Image> score (new Image(SCREEN_W*3/4-2*BLOCK_SIZE_X,2*BLOCK_SIZE_Y,4*BLOCK_SIZE_X,2*BLOCK_SIZE_Y,sprite3));
+	
 
 	while(1){
+		auto start = std::chrono::steady_clock::now();
 		if(key->Quit()) break;
 		ctrl->step();
 		if(!player_vec[0]->is_alive())
@@ -86,7 +91,11 @@ int main(){
 		view->render(prints);
 	
 		player_vec[0]->set_speed(speed - ((player_vec[0]->get_lines_completed()/decrease_n)*decrease));
-		SDL_Delay(delay);		
+		
+		auto end = std::chrono::steady_clock::now();
+		std::chrono::duration<double> diff = end-start;
+		if(diff.count()/1000 < delay)
+			SDL_Delay(delay-diff.count()/1000);		
 	}
 	
 	std::vector<std::shared_ptr<Image>> prints = blk_pos->create_score_image(player_vec[0]->get_points(), SCREEN_W/2-BLOCK_SIZE_X*6, SCREEN_H/2, 2*BLOCK_SIZE_X);
