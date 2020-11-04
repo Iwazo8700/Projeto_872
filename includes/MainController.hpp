@@ -8,6 +8,7 @@
 #include "Collision.hpp"
 #include "Keyboard.hpp"
 #include "Player.hpp"
+#include "IAFunctions.hpp"
 #include <vector>
 #include <memory>
 #include <SDL2/SDL.h>
@@ -78,4 +79,6 @@ class MainController{
 		* \return bool Retorna true se o Player deveria perder e false caso contrário
 		*/	
 		bool is_dead(std::shared_ptr<Player> player);
+
+		void IAstep(std::shared_ptr<IAFunctions> iafunctions);
 };
