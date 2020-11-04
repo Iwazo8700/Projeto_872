@@ -8,6 +8,7 @@ Keyboard::Keyboard(std::shared_ptr<Bloco> bloco, int delay = 40){
 	this->time_des = 0;
 	this->time_rot = 0;
 	this->time_ver = 0;
+	this->time_space = 0;
 	this->delay = delay;
 }
 
@@ -66,14 +67,16 @@ int Keyboard::Desloc_Vert(){
 }
 
 int Keyboard::Space(std::shared_ptr<Collision> collision){
-	if(Space_atraso){
+	if(this->time_space+this->delay <= SDL_GetTicks()){
+	/*if(Space_atraso){
 		Space_atraso = false;
 		return bloco->get_y();
 		
 	}
-	Space_atraso = true;
-	SDL_PumpEvents();
-	if(state[SDL_SCANCODE_SPACE]) return Down(collision);
+	Space_atraso = true;*/
+		SDL_PumpEvents();
+		if(state[SDL_SCANCODE_SPACE]) return Down(collision);
+	}
 	return bloco->get_y();
 	
 }

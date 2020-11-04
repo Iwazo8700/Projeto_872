@@ -26,7 +26,7 @@ class Keyboard{
 		bool Rot_atraso = false;
 		bool Desloc_atraso = false;
 		bool Space_atraso = false;
-		int time_des,time_ver,time_rot,delay;
+		int time_des,time_ver,time_rot,time_space,delay;
 	public:
 		Keyboard(std::shared_ptr<Bloco> bloco, int delay);
 		void set_bloco(std::shared_ptr<Bloco> bloco);
