@@ -101,7 +101,7 @@ int Keyboard::Down(std::shared_ptr<Collision> collision){
 	while(!collision->is_colliding(bloco))
 		this->bloco->set_y(this->bloco->get_y() + 1);
 	this->bloco->set_y(this->bloco->get_y() - 1);
-	return this->bloco->get_y() - 1;
+	return this->bloco->get_y();
 
 }
 

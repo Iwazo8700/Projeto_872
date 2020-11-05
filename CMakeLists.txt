@@ -24,6 +24,9 @@ add_library(Keyboard src/Controller/Keyboard.cpp)
 add_library(Main src/Controller/MainController.cpp)
 add_library(Player src/Model/Player.cpp)
 add_library(Config src/Controller/ConfigReader.cpp)
+add_library(IA src/Model/IA.cpp)
+add_library(IAFunctions src/Controller/IAFunctions.cpp)
+
 
 target_link_libraries(Sirtet Sprites)
 target_link_libraries(Sirtet Piece)
@@ -38,6 +41,8 @@ target_link_libraries(Sirtet Keyboard)
 target_link_libraries(Sirtet Main)
 target_link_libraries(Sirtet Player)
 target_link_libraries(Sirtet Config)
+target_link_libraries(Sirtet IA)
+target_link_libraries(Sirtet IAFunctions)
 
 # Garantir que usaremos C++11 (ou superior, se preciso)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")

@@ -8,6 +8,7 @@
 #include "Collision.hpp"
 #include "Keyboard.hpp"
 #include "Player.hpp"
+#include "IAFunctions.hpp"
 #include <vector>
 #include <memory>
 #include <SDL2/SDL.h>
@@ -26,6 +27,7 @@ class MainController{
 		std::shared_ptr<Map> map; /*<! Ponteiro para o Map que será usado*/
 		std::shared_ptr<Collision> collision; /*<! Collision que verificará colisões*/
 		std::vector<std::shared_ptr<Player>> players; /*<! Lista com todos os Players presentes*/
+		std::vector<std::shared_ptr<IAFunctions>> iafunc_vec;
 	public:
 		/*! \brief Construtor da MainController
 		*
@@ -35,7 +37,7 @@ class MainController{
 		* \param std::vector<std::shared_ptr<Player>> players Lista com todos os players do jogo já alocado
 		* \param std::shared_ptr<Formato> formato Instância já alocada do objeto contendo todas as formas possíveis para uma peça
 		*/
-		MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato);
+		MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec);
 		/*! \brief Verifica se a peça do Player deve cair um bloco automaticamente.
 		* Verifica usando os atributos speed e time do Player além do tempo atual para verificar se o tempo entre os movimentos já passou, de modo
 		* que a peça deveria cair mais um bloco.
@@ -78,4 +80,6 @@ class MainController{
 		* \return bool Retorna true se o Player deveria perder e false caso contrário
 		*/	
 		bool is_dead(std::shared_ptr<Player> player);
+
+		void IAstep();
 };
