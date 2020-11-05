@@ -1,5 +1,13 @@
 #include "MainController.hpp"
 		
+MainController::MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato){
+	this->map = map;
+	this->players = players;
+	std::shared_ptr<Collision> col (new Collision(this->map));
+	this->collision = col;
+	this->formats = formato;
+}
+
 MainController::MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec){
 	this->map = map;
 	this->players = players;

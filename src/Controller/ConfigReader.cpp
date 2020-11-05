@@ -14,12 +14,20 @@ ConfigReader::ConfigReader(const char* config_file){
 	this->screen_height=440;
 	this->lines=20; 
 	this->lines=1; 
+	this->thickness=1; 
+	this->block_r =255;
+	this->block_g =255;
+	this->block_b =255;
+	this->r =255;
+	this->g =255;
+	this->b =255;
 	this->columns=10; 
 	this->speed=500; 
 	this->delay=20; 
 	this->decrease=50;
 	this->decrease_n=10;
 	this->keyboard_time=50;
+	this->normal=10; 
 
 	while(getline(file, text)){
 		if(text.size() == 0 || text.at(0) == '#')
@@ -52,11 +60,31 @@ ConfigReader::ConfigReader(const char* config_file){
 			this->block_size_x = this->get_value(text);
 		else if(text.find("block_size_y") != std::string::npos)
 			this->block_size_y = this->get_value(text);
+		else if(text.find("thickness") != std::string::npos)
+			this->thickness = this->get_value(text);
+		else if(text.find("line_r") != std::string::npos)
+			this->r = this->get_value(text);
+		else if(text.find("line_g") != std::string::npos)
+			this->g = this->get_value(text);
+		else if(text.find("line_b") != std::string::npos)
+			this->b = this->get_value(text);
+		else if(text.find("block_r") != std::string::npos)
+			this->block_r = this->get_value(text);
+		else if(text.find("block_g") != std::string::npos)
+			this->block_g = this->get_value(text);
+		else if(text.find("block_b") != std::string::npos)
+			this->block_b = this->get_value(text);
+		else if(text.find("normal") != std::string::npos){
+			if(text.find("true") != std::string::npos)
+				this->normal = true;
+			else
+				this->normal = false;
+		}
 	}
 	if(this->block_size_x == -1)
-		this->block_size_x = this->screen_width/(2*this->columns+2);
+		this->block_size_x = ((this->screen_width/2)-this->shift_x)/this->columns;
 	if(this->block_size_y == -1)
-		this->block_size_y = this->screen_height/(this->lines+2);
+		this->block_size_y = (this->screen_height-this->shift_y)/(this->lines);
 	if(this->shift_x == -1)
 		this->shift_x = this->block_size_x;
 	if(this->shift_y == -1)
@@ -69,6 +97,38 @@ int ConfigReader::get_keyboard_time(){
 
 int ConfigReader::get_decrease(){
 	return this->decrease;
+}
+
+int ConfigReader::get_thickness(){
+	return this->thickness;
+}
+
+int ConfigReader::get_r(){
+	return this->r;
+}
+
+bool ConfigReader::get_normal(){
+	return this->normal;
+}
+
+int ConfigReader::get_g(){
+	return this->g;
+}
+
+int ConfigReader::get_b(){
+	return this->b;
+}
+
+int ConfigReader::get_block_r(){
+	return this->block_r;
+}
+
+int ConfigReader::get_block_g(){
+	return this->block_g;
+}
+
+int ConfigReader::get_block_b(){
+	return this->block_b;
 }
 
 int ConfigReader::get_decrease_n(){

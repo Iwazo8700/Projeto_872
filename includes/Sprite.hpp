@@ -24,7 +24,7 @@ class Sprite{
 		* \param const char *dir nome do arquivo contendo o sprite
 		* \return Nada (este é um construtor!)
 		* */
-		Sprite(char const *dir, std::shared_ptr<SDL_Model> sdl);
+		Sprite(std::shared_ptr<SDL_Model> sdl,char const *dir);
 		/*! \brief Destrutor do Sprite
 		*
 		* Destroi textura no SDL
@@ -34,5 +34,6 @@ class Sprite{
 		~Sprite();
 
 		void set_image(char const *dir);
+		void set_texture(SDL_Texture* texture);
 		SDL_Texture* get_texture();
 };

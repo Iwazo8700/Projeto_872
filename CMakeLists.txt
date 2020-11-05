@@ -27,6 +27,7 @@ add_library(Config src/Controller/ConfigReader.cpp)
 add_library(IA src/Model/IA.cpp)
 add_library(IAFunctions src/Controller/IAFunctions.cpp)
 
+
 target_link_libraries(Sirtet Sprites)
 target_link_libraries(Sirtet Piece)
 target_link_libraries(Sirtet Map)
