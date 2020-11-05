@@ -32,6 +32,7 @@ class ConfigReader{
 		int r,g,b; /*<! Cores rgb para as linhas do mapa*/
 		int block_r,block_g,block_b; /*<! Cores rgb para o bloco*/
 		int thickness; /*<! Grossura das linhas do mapa*/
+		bool normal; /*<! true se o jogo é normal, false caso seja a ia jogando*/
 	public:
 		/*! Construtor da classe ConfigReader
 		*
@@ -48,6 +49,7 @@ class ConfigReader{
 		int get_block_r();
 		int get_block_g();
 		int get_block_b();
+		bool get_normal();
 		int get_r();
 		int get_g();
 		int get_b();

@@ -44,6 +44,7 @@ int main(){
 	int block_r = config->get_block_r();
 	int block_g = config->get_block_g();
 	int block_b = config->get_block_b();
+	bool normal = config->get_normal();
 
 	std::shared_ptr<Formato> format (new Formato("../assets/Formatos.dat"));
 	std::shared_ptr<SDL_Model> sdl (new SDL_Model(SCREEN_W,SCREEN_H));
@@ -65,103 +66,109 @@ int main(){
 	map->set_sprites(vecin);
 
 	
-
+	std::shared_ptr<MainController> ctrl;
+	std::shared_ptr<IA> ia;
+	std::vector<std::shared_ptr<IAFunctions>> iafunc_vec;
+	std::shared_ptr<IAFunctions> iafunctions;
 	std::shared_ptr<Keyboard> key (new Keyboard(block, keyboard_time, num_lines));
 	std::shared_ptr<Player> player (new Player(block, key, speed));
 	std::vector<std::shared_ptr<Player>> player_vec;
 	player_vec.push_back(player);
-	std::shared_ptr<MainController> ctrl (new MainController(map, player_vec, format));
+	
+	if(normal)
+		 ctrl = std::shared_ptr<MainController>(new MainController(map, player_vec, format));
+	else{
+		ia = std::shared_ptr<IA>(new IA(player, -0.510066, 0.760666, -0.35663, -0.184483));
+		iafunctions = std::shared_ptr<IAFunctions>(new IAFunctions(ia, map, collision));
+		iafunc_vec.push_back(iafunctions);
+		ctrl = std::shared_ptr<MainController>(new MainController(map, player_vec, format, iafunc_vec));
+	}
 
 	std::shared_ptr<Image> score (new Image(SCREEN_W*3/4-2*BLOCK_SIZE_X,2*BLOCK_SIZE_Y,4*BLOCK_SIZE_X,2*BLOCK_SIZE_Y,sprite3));
-	
-	std::shared_ptr<IA> ia(new IA(player, -0.510066, 0.760666, -0.35663, -0.184483));
-	std::shared_ptr<IAFunctions> iafunctions (new IAFunctions(ia, map, collision));
-	std::vector<std::shared_ptr<IAFunctions>> iafunc_vec;
-	iafunc_vec.push_back(iafunctions);
-	std::shared_ptr<MainController> ctrl (new MainController(map, player_vec, format, iafunc_vec));
 
 
-	bool normal = false; 
+
+	 
 	if(normal){
-	while(1){
-		auto start = std::chrono::steady_clock::now();
-		if(key->Quit()) break;
-		ctrl->step();
-		if(!player_vec[0]->is_alive())
-			break;
-		std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(player_vec[0]->get_piece());
-		std::vector<std::shared_ptr<Image>> prints2 = blk_pos->create_image_vector(map);
-		std::vector<std::shared_ptr<Image>> prints3 = blk_pos->create_score_image(player_vec[0]->get_points(), SCREEN_W*3/4-3*BLOCK_SIZE_X, 4*BLOCK_SIZE_Y, BLOCK_SIZE_X);
-	
-		prints.insert(prints.end(), prints2.begin(),prints2.end());		
-		prints.insert(prints.end(), prints3.begin(),prints3.end());
-		prints.insert(prints.end(), score);		
-
-		prints.insert(prints.begin(),img);
-		view->render(prints);
-	
-		player_vec[0]->set_speed(speed - ((player_vec[0]->get_lines_completed()/decrease_n)*decrease));
+		while(1){
+			auto start = std::chrono::steady_clock::now();
+			if(key->Quit()) break;
+			ctrl->step();
+			if(!player_vec[0]->is_alive())
+				break;
+			std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(player_vec[0]->get_piece());
+			std::vector<std::shared_ptr<Image>> prints2 = blk_pos->create_image_vector(map);
+			std::vector<std::shared_ptr<Image>> prints3 = blk_pos->create_score_image(player_vec[0]->get_points(), SCREEN_W*3/4-3*BLOCK_SIZE_X, 4*BLOCK_SIZE_Y, BLOCK_SIZE_X);
 		
-		auto end = std::chrono::steady_clock::now();
-		std::chrono::duration<double> diff = end-start;
-		if(diff.count()/1000 < delay)
-			SDL_Delay(delay-diff.count()/1000);		
-	}
-	
-	std::vector<std::shared_ptr<Image>> prints = blk_pos->create_score_image(player_vec[0]->get_points(), SCREEN_W/2-BLOCK_SIZE_X*6, SCREEN_H/2, 2*BLOCK_SIZE_X);
-	prints.insert(prints.end(), end_screen);
-	
-	while(1){
-		if(key->Quit()) break;
+			prints.insert(prints.end(), prints2.begin(),prints2.end());		
+			prints.insert(prints.end(), prints3.begin(),prints3.end());
+			prints.insert(prints.end(), score);		
 
-		view->render(prints);
-		SDL_Delay(50);		
-	}
-	
+			prints.insert(prints.begin(),img);
+			view->render(prints);
+		
+			player_vec[0]->set_speed(speed - ((player_vec[0]->get_lines_completed()/decrease_n)*decrease));
+			
+			auto end = std::chrono::steady_clock::now();
+			std::chrono::duration<double> diff = end-start;
+			if(diff.count()/1000 < delay)
+				SDL_Delay(delay-diff.count()/1000);		
+		}
+		
+		std::vector<std::shared_ptr<Image>> prints = blk_pos->create_score_image(player_vec[0]->get_points(), SCREEN_W/2-BLOCK_SIZE_X*6, SCREEN_H/2, 2*BLOCK_SIZE_X);
+		prints.insert(prints.end(), end_screen);
+		
+		while(1){
+			if(key->Quit()) break;
+
+			view->render(prints);
+			SDL_Delay(50);		
+		}
+		
 	}else{
-	while(1){
-		if(key->Quit()) break;
-		ctrl->IAstep();
-		if(!iafunctions->get_IA()->get_player()->is_alive())
-			break;
-		
-		/*teste = map->get_map();
-		for(int i=0; i<teste.size(); i++){
-			for(int j=0; j<teste[i].size(); j++){
-				std::cout << teste[i][j];
+		while(1){
+			if(key->Quit()) break;
+			ctrl->IAstep();
+			if(!iafunctions->get_IA()->get_player()->is_alive())
+				break;
+			
+			/*teste = map->get_map();
+			for(int i=0; i<teste.size(); i++){
+				for(int j=0; j<teste[i].size(); j++){
+					std::cout << teste[i][j];
+				}
+				std::cout << std::endl;
 			}
 			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-		*/
-		std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(iafunctions->get_IA()->get_player()->get_piece());
-                std::vector<std::shared_ptr<Image>> prints2 = blk_pos->create_image_vector(map);
-                std::vector<std::shared_ptr<Image>> prints3 = blk_pos->create_score_image(iafunctions->get_IA()->get_player()->get_points(), BLOCK_SIZE_X*(3*COLUMNS/2-1), 4*BLOCK_SIZE_Y, BLOCK_SIZE_X);
+			*/
+			std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(iafunctions->get_IA()->get_player()->get_piece());
+			std::vector<std::shared_ptr<Image>> prints2 = blk_pos->create_image_vector(map);
+			std::vector<std::shared_ptr<Image>> prints3 = blk_pos->create_score_image(iafunctions->get_IA()->get_player()->get_points(), BLOCK_SIZE_X*(3*COLUMNS/2-1), 4*BLOCK_SIZE_Y, BLOCK_SIZE_X);
+			
 		
-	
-		prints.insert(prints.end(), prints2.begin(),prints2.end());		
-		prints.insert(prints.end(), prints3.begin(),prints3.end());
-		prints.insert(prints.end(), score);		
+			prints.insert(prints.end(), prints2.begin(),prints2.end());		
+			prints.insert(prints.end(), prints3.begin(),prints3.end());
+			prints.insert(prints.end(), score);		
 
-		prints.insert(prints.begin(),img);
-		view->render(prints);
-	
-		iafunctions->get_IA()->get_player()->set_speed(speed - ((iafunctions->get_IA()->get_player()->get_lines_completed()/decrease_n)*decrease));
-		SDL_Delay(50);		
-	}
-	std::vector<std::shared_ptr<Image>> prints = blk_pos->create_score_image(iafunctions->get_IA()->get_player()->get_points(), BLOCK_SIZE_X*(COLUMNS/2-1), SCREEN_H/2, 2*BLOCK_SIZE_X);
-	prints.insert(prints.end(), end_screen);
-	
-	while(1){
-		if(key->Quit()) break;
+			prints.insert(prints.begin(),img);
+			view->render(prints);
+		
+			iafunctions->get_IA()->get_player()->set_speed(speed - ((iafunctions->get_IA()->get_player()->get_lines_completed()/decrease_n)*decrease));
+			SDL_Delay(50);		
+		}
+		std::vector<std::shared_ptr<Image>> prints = blk_pos->create_score_image(iafunctions->get_IA()->get_player()->get_points(), BLOCK_SIZE_X*(COLUMNS/2-1), SCREEN_H/2, 2*BLOCK_SIZE_X);
+		prints.insert(prints.end(), end_screen);
+		
+		while(1){
+			if(key->Quit()) break;
 
-		view->render(prints);
-		SDL_Delay(50);		
-	}
+			view->render(prints);
+			SDL_Delay(50);		
+		}
 
-	
-	
-	
+		
+		
+		
 	}
 
 

@@ -27,6 +27,7 @@ ConfigReader::ConfigReader(const char* config_file){
 	this->decrease=50;
 	this->decrease_n=10;
 	this->keyboard_time=50;
+	this->normal=10; 
 
 	while(getline(file, text)){
 		if(text.size() == 0 || text.at(0) == '#')
@@ -73,6 +74,12 @@ ConfigReader::ConfigReader(const char* config_file){
 			this->block_g = this->get_value(text);
 		else if(text.find("block_b") != std::string::npos)
 			this->block_b = this->get_value(text);
+		else if(text.find("normal") != std::string::npos){
+			if(text.find("true") != std::string::npos)
+				this->normal = true;
+			else
+				this->normal = false;
+		}
 	}
 	if(this->block_size_x == -1)
 		this->block_size_x = ((this->screen_width/2)-this->shift_x)/this->columns;
@@ -98,6 +105,10 @@ int ConfigReader::get_thickness(){
 
 int ConfigReader::get_r(){
 	return this->r;
+}
+
+bool ConfigReader::get_normal(){
+	return this->normal;
 }
 
 int ConfigReader::get_g(){
