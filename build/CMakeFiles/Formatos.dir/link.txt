@@ -1,2 +1,0 @@
-/usr/bin/ar qc libFormatos.a CMakeFiles/Formatos.dir/src/Model/Formato.cpp.o
-/usr/bin/ranlib libFormatos.a

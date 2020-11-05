@@ -1,2 +1,0 @@
-/usr/bin/ar qc libBlockController.a CMakeFiles/BlockController.dir/src/Controller/BlockPosition.cpp.o
-/usr/bin/ranlib libBlockController.a
