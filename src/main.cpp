@@ -63,11 +63,11 @@ int main(){
 	std::uniform_real_distribution<> dis(-1, 1);
 	dis(gen);
 	std::vector<std::shared_ptr<Player>> player_vec;
-	int repeticoes = 10;
+	int repeticoes = 3;
 	int EPOCH = 100;
 	int REMOVE;
 	int CROSSOVER;
-	int BATCH = 100;
+	int BATCH = 50;
 	for(int i=0; i<BATCH; i++){
 		std::shared_ptr<Player> player (new Player(block, key, speed));
 		player_vec.push_back(player);
@@ -78,7 +78,7 @@ int main(){
 	for(int epoch = 0; epoch < EPOCH; epoch++){
 		std::cout << "-----------------------" <<"Epoch: " <<  epoch << "-----------------------"  << std::endl;
 		for(int i=0; i<ia_vec.size(); i++){
-			SDL_Delay(100);		
+			//SDL_Delay(100);		
 			for(int j = 0; j < repeticoes; j++){
 				std::shared_ptr<Map> map (new Map(COLUMNS,LINES,BLOCK_SIZE_Y,BLOCK_SIZE_X));
 				std::vector<std::shared_ptr<Sprite>> vecin;
@@ -93,21 +93,21 @@ int main(){
 					ctrl->IAstep(iafunctions, i);
 					if(!ia_vec[i]->get_player()->is_alive()){
 						break;}
-					std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(ia_vec[i]->get_player()->get_piece());
+					//std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(ia_vec[i]->get_player()->get_piece());
 					
-					std::vector<std::shared_ptr<Image>> prints2 = blk_pos->create_image_vector(map);
+					//std::vector<std::shared_ptr<Image>> prints2 = blk_pos->create_image_vector(map);
 					
-					std::vector<std::shared_ptr<Image>> prints3 = blk_pos->create_score_image(ia_vec[i]->get_player()->get_points(), BLOCK_SIZE_X*(3*COLUMNS/2-1), 4*BLOCK_SIZE_Y, BLOCK_SIZE_X);
+					//std::vector<std::shared_ptr<Image>> prints3 = blk_pos->create_score_image(ia_vec[i]->get_player()->get_points(), BLOCK_SIZE_X*(3*COLUMNS/2-1), 4*BLOCK_SIZE_Y, BLOCK_SIZE_X);
 					
-					prints.insert(prints.end(), prints2.begin(),prints2.end());		
-					prints.insert(prints.end(), prints3.begin(),prints3.end());
-					prints.insert(prints.end(), score);		
+					//prints.insert(prints.end(), prints2.begin(),prints2.end());		
+					//prints.insert(prints.end(), prints3.begin(),prints3.end());
+					//prints.insert(prints.end(), score);		
 
-					prints.insert(prints.begin(),img);
-					view->render(prints);
+					//prints.insert(prints.begin(),img);
+					//view->render(prints);
 					
 					ia_vec[i]->get_player()->set_speed(speed - ((ia_vec[i]->get_player()->get_lines_completed()/decrease_n)*decrease));
-					SDL_Delay(50);		
+				//	SDL_Delay(50);		
 				}
 				//std::cout << " IA: " << i << " Repeticao: " << j << std::endl;
 				//std::cout<<ia_vec[i]->get_a()<<" | "<<ia_vec[i]->get_b()<<" | "<<ia_vec[i]->get_c()<<" | "<<ia_vec[i]->get_d()<<" | "<<ia_vec[i]->get_player()->get_points()<<std::endl; 
