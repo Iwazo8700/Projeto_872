@@ -68,6 +68,7 @@ int main(){
 	int REMOVE;
 	int CROSSOVER;
 	int BATCH = 50;
+	int points = 0;
 	for(int i=0; i<BATCH; i++){
 		std::shared_ptr<Player> player (new Player(block, key, speed));
 		player_vec.push_back(player);
@@ -113,16 +114,18 @@ int main(){
 				//std::cout<<ia_vec[i]->get_a()<<" | "<<ia_vec[i]->get_b()<<" | "<<ia_vec[i]->get_c()<<" | "<<ia_vec[i]->get_d()<<" | "<<ia_vec[i]->get_player()->get_points()<<std::endl; 
 				ia_vec[i]->get_player()->Revive();
 			}
+			if(ia_vec[i]->get_player()->get_points()/10 > points){
+				std::cout << "-----------------------" << "Maior Pontuacao Atual" << "-----------------------" << std::endl;
+				points = ia_vec[i]->get_player()->get_points()/10;
+				std::cout<<ia_vec[i]->get_a()<<" | "<<ia_vec[i]->get_b()<<" | "<<ia_vec[i]->get_c()<<" | "<<ia_vec[i]->get_d()<<" | "<<ia_vec[i]->get_player()->get_points()/10 <<std::endl; 
+			}
+		
+
 			//ia_vec[i]->get_player()->set_points(points);
 
 		}
 	
 
-		//std::cout << "-----------------------" << "Pesos e Score antes das mudanças" << "-----------------------" << std::endl;
-		for(int ii=0; ii < ia_vec.size(); ii++){
-			if(ia_vec[ii]->get_player()->get_points()/10 > 1000000)
-				std::cout<<ia_vec[ii]->get_a()<<" | "<<ia_vec[ii]->get_b()<<" | "<<ia_vec[ii]->get_c()<<" | "<<ia_vec[ii]->get_d()<<" | "<<ia_vec[ii]->get_player()->get_points()<<std::endl; 
-		}
 		
 		std::shared_ptr<Map> map (new Map(COLUMNS,LINES,BLOCK_SIZE_Y,BLOCK_SIZE_X));
 		std::vector<std::shared_ptr<Sprite>> vecin;
@@ -134,8 +137,11 @@ int main(){
 		REMOVE = (int) (ia_vec.size()*0.3);
 		CROSSOVER = (int) (ia_vec.size()*0.1);	
 		ia_vec = ctrl->Fitness();
-		ia_vec.erase(ia_vec.end()-REMOVE, ia_vec.end());
+		std::cout << "-----------------------" << "Melhor da epoca" << "-----------------------" << std::endl;
+		std::cout<<ia_vec[0]->get_a()<<" | "<<ia_vec[0]->get_b()<<" | "<<ia_vec[0]->get_c()<<" | "<<ia_vec[0]->get_d()<<" | "<<ia_vec[0]->get_player()->get_points()/10 <<std::endl; 
 		
+		ia_vec.erase(ia_vec.end()-REMOVE, ia_vec.end());
+			
 		for(int ii=0; ii<CROSSOVER; ii++){
 			ia_vec.push_back(ctrl->Crossover(ia_vec[ii], ia_vec[ii+1]));
 		}
