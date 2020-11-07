@@ -1,12 +1,20 @@
 #include "MainController.hpp"
 		
-MainController::MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec){
+MainController::MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IA>> ias){
 	this->map = map;
 	this->players = players;
 	std::shared_ptr<Collision> col (new Collision(this->map));
 	this->collision = col;
 	this->formats = formato;
-	this->iafunc_vec = iafunc_vec;
+	this->ias = ias;
+}
+
+void MainController::set_map(std::shared_ptr<Map> map){
+	this->map = map;
+}
+
+void MainController::set_iavec(std::vector<std::shared_ptr<IA>> ia_vec){
+	this->ias = ia_vec;
 }
 
 bool MainController::should_move(std::shared_ptr<Player> player){
@@ -105,16 +113,18 @@ std::shared_ptr<Bloco> MainController::create_random_block(int x, int y, int hei
 }
 
 
-void MainController::IAstep(){
+void MainController::IAstep(std::shared_ptr<IAFunctions> iafunctions, int n){
 	int points=0;
 	std::shared_ptr<Player> ia_player;
-	for(auto iafunctions : this->iafunc_vec){
-		ia_player = iafunctions->get_IA()->get_player();
+	std::shared_ptr<IA> ia = ias[n];
+		ia_player = ia->get_player();
+		iafunctions->set_IA(ia);
 		if(should_move(ia_player) && ia_player->is_alive()){
 			ia_player->get_piece()->set_y(ia_player->get_piece()->get_y()+1);
 			if(this->collision->is_colliding(ia_player->get_piece())){
 				if(is_dead(ia_player)){
 					ia_player->kill();
+					return;
 				}
 				ia_player->get_piece()->set_y(ia_player->get_piece()->get_y()-1);
 				this->map->add_to_map(ia_player->get_piece(),1);
@@ -139,9 +149,81 @@ void MainController::IAstep(){
 			}
 		//std::cout << "cheguei aqui" << std::endl;
 			ia_player->set_piece(iafunctions->TestAll());
-	}
+	
 }
 
+
+
+
+
+void MainController::insertionSort(int n)  
+{  
+    int i, j;
+    std::shared_ptr<IA> key;  
+    std::shared_ptr<IA> change;
+    for (i = 1; i < n; i++) 
+    {  
+        key = ias[i];  
+        j = i - 1;  
+ 	 
+        while (j >= 0 && ias[j]->get_player()->get_points() > key->get_player()->get_points()) 
+        {	
+	    std::swap(ias[j], ias[j+1]);  
+            j = j - 1;  
+        }  
+        ias[j + 1] = key;  
+    }  
+}  
+std::vector<std::shared_ptr<IA>> MainController::Fitness(){
+	insertionSort(ias.size());
+	std::reverse(ias.begin(),ias.end());
+	return ias;
+}
+
+
+std::shared_ptr<IA> MainController::Crossover(std::shared_ptr<IA> ia1, std::shared_ptr<IA> ia2){
+	std::shared_ptr<IA> retorno = std::make_shared<IA>(*(ia1));
+	
+	
+	retorno->set_a((std::abs(ia1->get_a())+std::abs(ia2->get_a()))/2);
+	if(ia1->get_a() < 0) retorno->set_a(-retorno->get_a());
+	retorno->set_b((std::abs(ia1->get_b())+std::abs(ia2->get_b()))/2);
+	if(ia1->get_b() < 0) retorno->set_b(-retorno->get_b());
+	retorno->set_c((std::abs(ia1->get_c())+std::abs(ia2->get_c()))/2);
+	if(ia1->get_c() < 0) retorno->set_c(-retorno->get_c());
+	retorno->set_d((std::abs(ia1->get_d())+std::abs(ia2->get_d()))/2);
+	if(ia1->get_d() < 0) retorno->set_d(-retorno->get_d());
+	return retorno;
+}
+
+std::shared_ptr<IA> MainController::Mutation(std::shared_ptr<IA> ia_mut){
+	std::shared_ptr<IA> retorno = std::make_shared<IA>(*(ia_mut));
+	int randoma = rand()%1000;
+	int randomb = rand()%1000;
+	int randomc = rand()%1000;
+	int randomd = rand()%1000;
+	if(randoma < 25){
+		retorno->set_a(retorno->get_a()+0.2);
+	}else if(randoma < 50){
+		retorno->set_a(retorno->get_a()-0.2);
+	}
+	if(randomb < 25){
+		retorno->set_b(retorno->get_b()+0.2);
+	}else if(randomb < 50){
+		retorno->set_b(retorno->get_b()-0.2);
+	}
+	if(randomc < 25){
+		retorno->set_c(retorno->get_c()+0.2);
+	}else if(randomc < 50){
+		retorno->set_c(retorno->get_c()-0.2);
+	}
+	if(randomd < 25){
+		retorno->set_d(retorno->get_d()+0.2);
+	}else if(randomd < 50){
+		retorno->set_d(retorno->get_d()-0.2);
+	}
+	return retorno;
+}
 
 
 

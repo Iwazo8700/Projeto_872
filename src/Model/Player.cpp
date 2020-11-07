@@ -13,6 +13,10 @@ Player::Player(std::shared_ptr<Bloco> piece, std::shared_ptr<Keyboard> keyboard,
 void Player::kill(){
 	this->alive = false;
 }
+
+void Player::Revive(){
+	this->alive = true;
+}
 		
 void Player::set_speed(int speed){
 	this->speed = speed;
@@ -37,6 +41,10 @@ bool Player::is_alive(){
 
 void Player::add_points(int points){
 	this->points += points;
+}
+
+void Player::set_points(int points){
+	this->points = points;
 }
 
 std::shared_ptr<Bloco> Player::get_piece(){

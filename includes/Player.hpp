@@ -45,6 +45,7 @@ class Player{
 		* \return Nada
 		*/
 		void add_points(int points);
+		void set_points(int points);
 		void set_time(unsigned int time);	
 
 		std::shared_ptr<Bloco> get_piece();
@@ -63,5 +64,6 @@ class Player{
 		/*! Mata o Player (define alive = false)
 		* \return Nada
 		*/
+		void Revive();
 		void kill();
 };
