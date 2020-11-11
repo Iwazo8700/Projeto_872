@@ -1,6 +1,6 @@
 # Altura e largura da tela
-screen_width = 880
-screen_height = 880
+screen_width = 440
+screen_height = 440
 
 # Número de linhas e colunas no mapa
 lines = 20
