@@ -18,6 +18,10 @@ void Player::set_speed(int speed){
 	this->speed = speed;
 }
 
+void Player::set_points(int points){
+	this->points = points;
+}
+
 void Player::set_piece(std::shared_ptr<Bloco> piece){
 	this->piece = piece;
 	this->keyboard->set_bloco(this->piece);
