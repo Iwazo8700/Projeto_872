@@ -13,12 +13,17 @@
 #include "Keyboard.hpp"
 #include "ConfigReader.hpp"
 #include "IA.hpp"
+#include "Container.hpp"
 #include "IAFunctions.hpp"
 #include <memory>
 #include <vector>
 #include <map>
 #include <iostream>
 #include <chrono>
+#include "json.hpp"
+#include <fstream>
+#include <sstream>
+#include <stdlib.h>
 
 int main(){
 	std::shared_ptr<ConfigReader> config (new ConfigReader("../assets/config"));
@@ -86,7 +91,7 @@ int main(){
 
 	std::shared_ptr<Image> score (new Image(SCREEN_W*3/4-2*BLOCK_SIZE_X,2*BLOCK_SIZE_Y,4*BLOCK_SIZE_X,2*BLOCK_SIZE_Y,sprite3));
 
-
+	json j;
 
 	 
 	if(normal){
@@ -112,7 +117,41 @@ int main(){
 			auto end = std::chrono::steady_clock::now();
 			std::chrono::duration<double> diff = end-start;
 			if(diff.count()/1000 < delay)
-				SDL_Delay(delay-diff.count()/1000);		
+				SDL_Delay(delay-diff.count()/1000);
+
+
+			if(key->Save()){
+				int tmp_count = 0;
+				std::vector<Container> containers(player_vec.size());
+				for(auto plyr : player_vec){
+					containers[tmp_count++].set_data(*plyr,*(plyr->get_piece()),*map);
+				}
+
+				j["Players"] = containers;
+				std::ofstream o("../assets/savefile.json");
+				o << j << std::endl;
+			}
+			if(key->Load()){
+				std::ifstream i("../assets/savefile.json");
+  				if (i.is_open() ) {
+    					i >> j;
+    					i.close();
+					std::vector<Container> containers;
+					int player_num = 0;
+					for(auto plyr : player_vec){
+						plyr->set_points(j["Players"][player_num]["player"]["points"]);
+						plyr->set_speed(j["Players"][player_num]["player"]["speed"]);
+						plyr->set_lines_completed(j["Players"][player_num]["player"]["lines_completed"]);
+						map->set_map(j["Players"][player_num]["map"]["map"]);
+						plyr->get_piece()->set_formato(j["Players"][player_num]["block"]["formato"]);
+						plyr->get_piece()->set_x(j["Players"][player_num]["block"]["x"]);
+						plyr->get_piece()->set_y(j["Players"][player_num]["block"]["y"]);
+						player_num++;
+					}
+  				} else {
+    					std::cout << "Erro ao tentar ler arquivo de saves!" << std::endl;
+  				}
+			}
 		}
 		
 		std::vector<std::shared_ptr<Image>> prints = blk_pos->create_score_image(player_vec[0]->get_points(), SCREEN_W/2-BLOCK_SIZE_X*6, SCREEN_H/2, 2*BLOCK_SIZE_X);
