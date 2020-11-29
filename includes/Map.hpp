@@ -1,9 +1,12 @@
 #pragma once
 
+#include "json.hpp"
 #include <vector>
 #include <memory>
 #include "Bloco.hpp"
 #include "Sprite.hpp"
+
+using nlohmann::json;
 
 /*! \brief Classe Map
 *
@@ -29,6 +32,9 @@ class Map{
 		* \return Nada (é um construtor)
 		*/
 		Map(int height, int width, int block_height, int block_width);
+		Map(){};
+		void set_map(std::vector<std::vector<int>> map);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(Map, map);
 		int get_block_width();
 		int get_block_height();
 		std::vector<std::vector<int>> get_map();

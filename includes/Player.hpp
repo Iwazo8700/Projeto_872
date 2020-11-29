@@ -1,9 +1,12 @@
 #pragma once
 
+#include "json.hpp"
 #include <vector>
 #include <memory>
 #include "Bloco.hpp"
 #include "Keyboard.hpp"
+
+using nlohmann::json;
 
 /*! \brief Classe Player
 *
@@ -31,8 +34,10 @@ class Player{
 		* \return Nada (é um Construtor)
 		*/
 		Player(std::shared_ptr<Bloco> piece, std::shared_ptr<Keyboard> keyboard, int speed);
+		Player(){};
 		void set_piece(std::shared_ptr<Bloco> piece);
 		void set_keyboard(std::shared_ptr<Keyboard> keyboard);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(Player, points, speed, lines_completed);
 		/*!
 		* Adiciona um valor à velocidade do Player
 		* \int speed Valor que será adicionado à velocidade
@@ -50,6 +55,7 @@ class Player{
 		std::shared_ptr<Bloco> get_piece();
 		std::shared_ptr<Keyboard> get_keyboard();
 		int get_points();
+		void set_points(int points);
 		int get_speed();
 		void set_speed(int speed);
 		int get_lines_completed();

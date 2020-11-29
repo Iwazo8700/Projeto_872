@@ -1,10 +1,13 @@
 #pragma once
 
+#include "json.hpp"
 #include <memory>
 #include <vector> 
 #include "Sprite.hpp"
 #include <unistd.h>
 #include <SDL2/SDL_image.h>
+
+using nlohmann::json;
 
 /*! \brief
 *
@@ -37,6 +40,9 @@ class Bloco {
 		* \return Nada (este é um construtor!)
 		* */
                 Bloco(int x, int y, std::vector<std::vector<bool>> formato, std::shared_ptr<Sprite> sprite, int height, int width);
+
+		Bloco(){};
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(Bloco, x, y, formato);
 
 		int get_x();
 		int get_y();
