@@ -9,6 +9,10 @@ Map::Map(int width, int height, int block_width, int block_height){
 	this->block_height = block_height;
 }
 
+void Map::set_map(std::vector<std::vector<int>> map){
+	this->map = map;
+}
+
 int Map::get_block_width(){
 	return this->block_width;
 }

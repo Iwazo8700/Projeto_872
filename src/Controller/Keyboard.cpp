@@ -69,6 +69,21 @@ bool Keyboard::Quit(){
 	return false;
 }
 
+bool Keyboard::Save(){
+	SDL_PumpEvents(); // atualiza estado do teclado
+	if (state[SDL_SCANCODE_W]) return true;
+
+	return false;
+}
+
+
+bool Keyboard::Load(){
+	SDL_PumpEvents(); // atualiza estado do teclado
+	if (state[SDL_SCANCODE_R]) return true;
+
+	return false;
+}
+
 std::vector<std::vector<bool>> Keyboard::RotHoraria(){
 	std::vector<std::vector<bool>> peca = bloco->get_formato();
 	std::vector<std::vector<bool>> retorno(peca[0].size(), std::vector<bool> (peca.size()));

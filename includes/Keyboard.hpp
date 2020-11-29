@@ -32,6 +32,8 @@ class Keyboard{
 		void set_bloco(std::shared_ptr<Bloco> bloco);
 		std::vector<std::vector<bool>> Rotation();
 		bool Quit();
+		bool Load();
+		bool Save();
 		int Desloc();
 		std::vector<std::vector<bool>> RotHoraria();
 		std::vector<std::vector<bool>> RotAnti();
