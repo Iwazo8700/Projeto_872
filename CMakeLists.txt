@@ -6,6 +6,7 @@ project(Sirtet)
 
 #
 add_executable(Sirtet src/main.cpp)
+add_executable(client src/client.cpp)
 
 # Especificar onde estao os header files
 include_directories(includes/)
@@ -46,6 +47,23 @@ target_link_libraries(Sirtet IA)
 target_link_libraries(Sirtet Container)
 target_link_libraries(Sirtet IAFunctions)
 
+target_link_libraries(client Sprites)
+target_link_libraries(client Piece)
+target_link_libraries(client Map)
+target_link_libraries(client SDL_Funcs)
+target_link_libraries(client Formatos)
+target_link_libraries(client BlockController)
+target_link_libraries(client View)
+target_link_libraries(client Image)
+target_link_libraries(client Collisions)
+target_link_libraries(client Keyboard)
+target_link_libraries(client Main)
+target_link_libraries(client Player)
+target_link_libraries(client Config)
+target_link_libraries(client IA)
+target_link_libraries(client Container)
+target_link_libraries(client IAFunctions)
+
 # Garantir que usaremos C++11 (ou superior, se preciso)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
@@ -56,6 +74,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 target_link_libraries(Sirtet SDL2)
 target_link_libraries(Sirtet SDL2_image)
 
+target_link_libraries(client SDL2)
+target_link_libraries(client SDL2_image)
+
+set(Boost_USE_STATIC_LIBS OFF) 
+set(Boost_USE_MULTITHREADED ON)  
+set(Boost_USE_STATIC_RUNTIME OFF) 
+find_package(Boost 1.45.0 COMPONENTS thread system date_time) 
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS}) 
+    target_link_libraries(client ${Boost_LIBRARIES})
+    target_link_libraries(Sirtet ${Boost_LIBRARIES})
+endif()
 # Automatizacao do Doxygen
 find_package(Doxygen REQUIRED dot)
 

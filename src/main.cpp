@@ -24,6 +24,10 @@
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
+#include <string>
+#include <boost/asio.hpp>
+
+using boost::asio::ip::udp;
 
 int main(){
 	std::shared_ptr<ConfigReader> config (new ConfigReader("../assets/config"));
@@ -93,14 +97,24 @@ int main(){
 
 	json j;
 
+	char v[120];
+	boost::asio::io_service my_io_service;
+	udp::endpoint local_endpoint(udp::v4(), 9001);
+	udp::socket my_socket(my_io_service,local_endpoint);
+	udp::endpoint remote_endpoint;
+	my_socket.receive_from(boost::asio::buffer(v,120),remote_endpoint);
 	 
 	if(normal){
 		while(1){
 			auto start = std::chrono::steady_clock::now();
 			if(key->Quit()) break;
+
 			ctrl->step();
+
 			if(!player_vec[0]->is_alive())
 				break;
+
+			
 			std::vector<std::shared_ptr<Image>> prints = blk_pos->create_image_vector(player_vec[0]->get_piece());
 			std::vector<std::shared_ptr<Image>> prints2 = blk_pos->create_image_vector(map);
 			std::vector<std::shared_ptr<Image>> prints3 = blk_pos->create_score_image(player_vec[0]->get_points(), SCREEN_W*3/4-3*BLOCK_SIZE_X, 4*BLOCK_SIZE_Y, BLOCK_SIZE_X);
@@ -111,9 +125,21 @@ int main(){
 
 			prints.insert(prints.begin(),img);
 			view->render(prints);
-		
+			
+
 			player_vec[0]->set_speed(speed - ((player_vec[0]->get_lines_completed()/decrease_n)*decrease));
 			
+			int tmp_count = 0;
+			std::vector<Container> containers(player_vec.size());
+			for(auto plyr : player_vec){
+				containers[tmp_count++].set_data(*plyr,*(plyr->get_piece()));
+			}
+
+			j["Players"] = containers;
+			j["Map"] = *map;
+			j["Over"] = false;
+			my_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
+
 			auto end = std::chrono::steady_clock::now();
 			std::chrono::duration<double> diff = end-start;
 			if(diff.count()/1000 < delay)
@@ -124,10 +150,11 @@ int main(){
 				int tmp_count = 0;
 				std::vector<Container> containers(player_vec.size());
 				for(auto plyr : player_vec){
-					containers[tmp_count++].set_data(*plyr,*(plyr->get_piece()),*map);
+					containers[tmp_count++].set_data(*plyr,*(plyr->get_piece()));
 				}
 
 				j["Players"] = containers;
+				j["Map"] = *map;
 				std::ofstream o("../assets/savefile.json");
 				o << j << std::endl;
 			}
@@ -159,10 +186,13 @@ int main(){
 		
 		while(1){
 			if(key->Quit()) break;
-
+			
 			view->render(prints);
 			SDL_Delay(50);		
 		}
+
+		j["Over"] = true;
+		my_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
 		
 	}else{
 		while(1){
@@ -190,7 +220,7 @@ int main(){
 			prints.insert(prints.end(), score);		
 
 			prints.insert(prints.begin(),img);
-			view->render(prints);
+			//view->render(prints);
 		
 			iafunctions->get_IA()->get_player()->set_speed(speed - ((iafunctions->get_IA()->get_player()->get_lines_completed()/decrease_n)*decrease));
 			SDL_Delay(50);		
@@ -201,7 +231,7 @@ int main(){
 		while(1){
 			if(key->Quit()) break;
 
-			view->render(prints);
+			//view->render(prints);
 			SDL_Delay(50);		
 		}
 
