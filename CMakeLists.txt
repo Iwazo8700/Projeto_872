@@ -87,6 +87,7 @@ if(Boost_FOUND)
     target_link_libraries(client ${Boost_LIBRARIES})
     target_link_libraries(Sirtet ${Boost_LIBRARIES})
 endif()
+
 # Automatizacao do Doxygen
 find_package(Doxygen REQUIRED dot)
 

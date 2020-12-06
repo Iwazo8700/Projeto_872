@@ -26,8 +26,47 @@
 #include <stdlib.h>
 #include <string>
 #include <boost/asio.hpp>
+#include <pthread.h>
+#include <mutex>
 
 using boost::asio::ip::udp;
+
+typedef struct {
+	boost::asio::io_service *my_io_service;
+	udp::socket *my_socket;
+	std::vector<udp::endpoint> *remote_endpoint;
+	std::vector<pthread_t> *threads;
+	std::shared_ptr<Map> map;
+	std::vector<std::shared_ptr<Player>> *player_vec;
+} data_info;
+
+void *udp_connection(void *data_in){
+	char v[120];
+	json j;
+	data_info *data = (data_info*) data_in;	
+
+	udp::endpoint tmp_remote_endpoint;
+	data->my_socket->receive_from(boost::asio::buffer(v,120),tmp_remote_endpoint);
+	data->remote_endpoint->push_back(tmp_remote_endpoint);
+	pthread_t tmp_thread;
+	pthread_create(&tmp_thread, NULL, udp_connection, data);
+	
+	data->threads->push_back(tmp_thread);
+
+	while(1){
+		int tmp_count = 0;
+		std::vector<Container> containers(data->player_vec->size());
+		for(auto plyr : *(data->player_vec)){
+			containers[tmp_count++].set_data(*plyr,*(plyr->get_piece()));
+		}
+
+		j["Players"] = containers;
+		j["Map"] = *data->map;
+		j["Over"] = false;
+		data->my_socket->send_to(boost::asio::buffer(j.dump()), tmp_remote_endpoint);
+		SDL_Delay(20);
+	}
+}
 
 int main(){
 	std::shared_ptr<ConfigReader> config (new ConfigReader("../assets/config"));
@@ -97,19 +136,37 @@ int main(){
 
 	json j;
 
-	char v[120];
 	boost::asio::io_service my_io_service;
 	udp::endpoint local_endpoint(udp::v4(), 9001);
 	udp::socket my_socket(my_io_service,local_endpoint);
-	udp::endpoint remote_endpoint;
-	my_socket.receive_from(boost::asio::buffer(v,120),remote_endpoint);
-	 
+	std::vector<udp::endpoint> remote_endpoint;
+	std::vector<pthread_t> threads;
+	
+	data_info thread_info;
+
+	thread_info.my_io_service = &my_io_service;
+	thread_info.threads = &threads;
+	thread_info.remote_endpoint = &remote_endpoint;
+	thread_info.my_socket = &my_socket;
+	thread_info.map = map;
+	thread_info.player_vec = &player_vec;
+
+	
+	std::mutex mtx;
+
+	pthread_t tmp_thread;
+	pthread_create(&tmp_thread, NULL, udp_connection, (void *) &thread_info);
+	
+	threads.push_back(tmp_thread);
+
 	if(normal){
 		while(1){
 			auto start = std::chrono::steady_clock::now();
 			if(key->Quit()) break;
-
+			
+			mtx.lock();
 			ctrl->step();
+			mtx.unlock();
 
 			if(!player_vec[0]->is_alive())
 				break;
@@ -129,17 +186,6 @@ int main(){
 
 			player_vec[0]->set_speed(speed - ((player_vec[0]->get_lines_completed()/decrease_n)*decrease));
 			
-			int tmp_count = 0;
-			std::vector<Container> containers(player_vec.size());
-			for(auto plyr : player_vec){
-				containers[tmp_count++].set_data(*plyr,*(plyr->get_piece()));
-			}
-
-			j["Players"] = containers;
-			j["Map"] = *map;
-			j["Over"] = false;
-			my_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
-
 			auto end = std::chrono::steady_clock::now();
 			std::chrono::duration<double> diff = end-start;
 			if(diff.count()/1000 < delay)
@@ -192,7 +238,8 @@ int main(){
 		}
 
 		j["Over"] = true;
-		my_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
+		for(auto endpoint : remote_endpoint)
+			my_socket.send_to(boost::asio::buffer(j.dump()), endpoint);
 		
 	}else{
 		while(1){
