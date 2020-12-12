@@ -55,18 +55,20 @@ bool MainController::is_dead(std::shared_ptr<Player> player){
 void MainController::step(){
 	int tmp,points=0, is_space = 0;
 	std::shared_ptr<Bloco> tmp_blk;
+	int player_num = 1;
 	for(auto player : this->players){
 		is_space = player->get_keyboard()->Space(this->collision);
 		if((should_move(player) && player->is_alive()) || is_space){
 			player->get_piece()->set_y(player->get_piece()->get_y()+1);
+
 			if(this->collision->is_colliding(player->get_piece())){
 				player->get_piece()->set_y(player->get_piece()->get_y()-1);
 				if(is_dead(player)){
 					player->kill();
 					continue;
 				}
-				this->map->add_to_map(player->get_piece(),1);
-				player->set_piece(this->create_random_block(this->map->get_map()[0].size()/2,-5,player->get_piece()->get_height(),player->get_piece()->get_width(), player->get_piece()->get_sprite()));
+				this->map->add_to_map(player->get_piece(),player_num);
+				player->set_piece(this->create_random_block(player->get_piece()->get_initial_x(),player->get_piece()->get_initial_x()));
 				points = this->update_board();
 				switch(points){
 					case 1:
@@ -86,20 +88,28 @@ void MainController::step(){
 				continue;
 			}
 		}
+		std::vector<std::shared_ptr<Bloco>> tmp_vector;
+		for(auto pl_piece : this->players)
+			if(pl_piece != player)
+				tmp_vector.push_back(pl_piece->get_piece());
+
+
 		tmp = player->get_piece()->get_x();
 		player->get_piece()->set_x(player->get_keyboard()->Desloc());
-		if(this->collision->is_colliding(player->get_piece()))
+		if(this->collision->is_colliding(player->get_piece()) || this->collision->is_colliding(tmp_blk,tmp_vector))
 			player->get_piece()->set_x(tmp);
 		
 		tmp_blk = std::make_shared<Bloco>(*(player->get_piece()));
 		tmp_blk->set_formato(player->get_keyboard()->Rotation());
-		if(!this->collision->is_colliding(tmp_blk))
+		if(!(this->collision->is_colliding(tmp_blk) || this->collision->is_colliding(tmp_blk,tmp_vector)))
 			player->get_piece()->set_formato(tmp_blk->get_formato());
 
 		tmp = player->get_piece()->get_y();
 		player->get_piece()->set_y(player->get_keyboard()->Desloc_Vert());
-		if(this->collision->is_colliding(player->get_piece()))
+		if(this->collision->is_colliding(player->get_piece()) || this->collision->is_colliding(player->get_piece(),tmp_vector))
 			player->get_piece()->set_y(tmp);
+
+		player_num++;
 	}
 }
 
@@ -107,47 +117,9 @@ void MainController::set_players(std::vector<std::shared_ptr<Player>> players){
 	this->players = players;
 }
 
-std::shared_ptr<Bloco> MainController::create_random_block(int x, int y, int height, int width, std::shared_ptr<Sprite> sprite){
+std::shared_ptr<Bloco> MainController::create_random_block(int x, int y){
 	std::vector<std::vector<bool>> vec = this->formats->get_random();
-	return (std::shared_ptr<Bloco>) new Bloco(x, -1*vec.size(), vec, sprite, height, width);
-}
-
-
-void MainController::IAstep(){
-	int points=0;
-	std::shared_ptr<Player> ia_player;
-	for(auto iafunctions : this->iafunc_vec){
-		ia_player = iafunctions->get_IA()->get_player();
-		if(should_move(ia_player) && ia_player->is_alive()){
-			ia_player->get_piece()->set_y(ia_player->get_piece()->get_y()+1);
-			if(this->collision->is_colliding(ia_player->get_piece())){
-				if(is_dead(ia_player)){
-					ia_player->kill();
-				}
-				ia_player->get_piece()->set_y(ia_player->get_piece()->get_y()-1);
-				this->map->add_to_map(ia_player->get_piece(),1);
-				ia_player->set_piece(this->create_random_block(this->map->get_map()[0].size()/2,-5,ia_player->get_piece()->get_height(),ia_player->get_piece()->get_width(), ia_player->get_piece()->get_sprite()));
-				points = this->update_board();
-				switch(points){
-					case 1:
-						ia_player->add_points(40);
-						break;
-					case 2:
-						ia_player->add_points(100);
-						break;
-					case 3:
-						ia_player->add_points(300);
-						break;
-					case 4:
-						ia_player->add_points(1200);
-						break;
-					}
-				ia_player->set_lines_completed(ia_player->get_lines_completed() + points);
-				}
-			}
-		//std::cout << "cheguei aqui" << std::endl;
-			ia_player->set_piece(iafunctions->TestAll());
-	}
+	return (std::shared_ptr<Bloco>) new Bloco(x, -1*vec.size(), vec);
 }
 
 

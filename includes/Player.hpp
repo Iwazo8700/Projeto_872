@@ -37,7 +37,7 @@ class Player{
 		Player(){};
 		void set_piece(std::shared_ptr<Bloco> piece);
 		void set_keyboard(std::shared_ptr<Keyboard> keyboard);
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(Player, points, speed, lines_completed);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(Player, points);
 		/*!
 		* Adiciona um valor à velocidade do Player
 		* \int speed Valor que será adicionado à velocidade

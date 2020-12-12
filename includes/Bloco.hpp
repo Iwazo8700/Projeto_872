@@ -24,7 +24,8 @@ class Bloco {
 		int width;  /*!< Largura de cada bloco da peça (em px)*/
 		std::vector<std::vector<bool>> formato; /*!< Matriz representando a forma do bloco*/
 		std::shared_ptr<Sprite> sprite; /*!< Shared Pointer para Sprite (previamente alocado) que será usada para renderizar o bloco*/
-
+		char format_name;
+		int initial_x, initial_y;
 	public:
 		/*! \brief Construtor do Bloco
 		*
@@ -40,19 +41,24 @@ class Bloco {
 		* \return Nada (este é um construtor!)
 		* */
                 Bloco(int x, int y, std::vector<std::vector<bool>> formato, std::shared_ptr<Sprite> sprite, int height, int width);
+		Bloco(int x, int y, std::vector<std::vector<bool>> formato);
 
 		Bloco(){};
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(Bloco, x, y, formato);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(Bloco, x, y, format_name);
 
 		int get_x();
+		int get_initial_x();
+		int get_initial_y();
 		int get_y();
 		int get_height();
 		int get_width();
-		SDL_Texture* get_texture();		
+		//SDL_Texture* get_texture();		
 		
 		std::vector<std::vector<bool>> get_formato();
 		std::shared_ptr<Sprite> get_sprite();
 
+		void set_format_name(char name);
+		char get_format_name();
 		void set_x(int x);
 		void set_y(int y);
 		void set_formato(std::vector<std::vector<bool>> formato);

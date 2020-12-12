@@ -7,6 +7,7 @@ Formato::Formato(char const *dir){
 	std::string line;
 	std::vector<std::vector<bool>> format;
 	std::vector<bool> format_line;
+	this->names = {'I','J','L','O','S','T','Z'};
 	formatos.push_back(std::vector<std::vector<bool>> (1, std::vector<bool>(0, 0)));
 	int ii=0;
 	int jj=0;
@@ -35,6 +36,21 @@ Formato::Formato(char const *dir){
 
 std::vector<std::vector<bool>> Formato::get_random(){
 	return this->formatos[rand()%this->formatos.size()];
+}
+
+char Formato::get_nome(std::vector<std::vector<bool>> vect){
+	for(int i = 0; i < this->formatos.size(); i++)
+		if(this->formatos[i] == vect)
+			return this->names[i];
+	return '0';
+
+}
+
+std::vector<std::vector<bool>> Formato::get_formato(char nome){
+	for(int i = 0; i < this->formatos.size(); i++)
+		if(this->names[i] == nome)
+			return this->formatos[i];
+	return this->formatos[0];
 }
 
 std::vector<std::vector<bool>> Formato::get_I(){

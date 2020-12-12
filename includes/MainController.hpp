@@ -73,7 +73,7 @@ class MainController{
 		* \param std::shared_ptr<Sprite> sprite Sprite contendo a textura desejada para o Bloco 
 		* \return std::shared_ptr<Bloco> ponteiro para o Bloco aleatório gerado
 		*/
-		std::shared_ptr<Bloco> create_random_block(int x, int y, int height, int width, std::shared_ptr<Sprite> sprite);
+		std::shared_ptr<Bloco> create_random_block(int x, int y);
 		void set_players(std::vector<std::shared_ptr<Player>> player);
 		/*! \brief Exclui as linhas completas (todos valores dela diferentes de 0) do mapa e insere novas linhas vazias
 		*

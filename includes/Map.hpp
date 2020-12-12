@@ -32,6 +32,7 @@ class Map{
 		* \return Nada (é um construtor)
 		*/
 		Map(int height, int width, int block_height, int block_width);
+		Map(int height, int width);
 		Map(){};
 		void set_map(std::vector<std::vector<int>> map);
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(Map, map);

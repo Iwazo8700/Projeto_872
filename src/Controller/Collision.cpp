@@ -33,7 +33,7 @@ bool Collision::is_colliding(std::shared_ptr<Bloco> block){
 }
 
 bool Collision::is_colliding(std::shared_ptr<Bloco> block, std::vector<std::shared_ptr<Bloco>> others){
-	std::vector<std::vector<bool>> vec = block->get_formato();
+/*	std::vector<std::vector<bool>> vec = block->get_formato();
 	std::vector<std::vector<int>> current_block = this->map->get_map();
 	std::vector<std::vector<int>> current_map = this->map->get_map();
 	int height = current_map.size();
@@ -69,7 +69,7 @@ bool Collision::is_colliding(std::shared_ptr<Bloco> block, std::vector<std::shar
 			i++;
 		}
 	}
-
+*/
 	return false;
 	
 }

@@ -9,6 +9,13 @@ Map::Map(int width, int height, int block_width, int block_height){
 	this->block_height = block_height;
 }
 
+Map::Map(int width, int height){
+	std::vector<std::vector<int>> map(height, std::vector<int>(width, 0));
+	this->height = height;
+	this->width = width;
+	this->map = map;
+}
+
 void Map::set_map(std::vector<std::vector<int>> map){
 	this->map = map;
 }
@@ -42,7 +49,7 @@ std::shared_ptr<Sprite> Map::get_texture(int i, int j){
 	int pos = this->map[i][j] - 1;
 
 	if(pos >= 0)
-		return this->sprites[pos];
+		return this->sprites[pos%this->sprites.size()];
 	else
 		return nullptr;
 }

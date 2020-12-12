@@ -69,8 +69,18 @@ int main(){
 	std::shared_ptr<View> view (new View(sdl));
 	std::shared_ptr<Sprite> sprite (new Sprite(sdl,""));
 	std::shared_ptr<Sprite> sprite2 (new Sprite(sdl,""));
+	std::shared_ptr<Sprite> sprite7 (new Sprite(sdl,""));
+	std::shared_ptr<Sprite> sprite4 (new Sprite(sdl,""));
+	std::shared_ptr<Sprite> sprite5 (new Sprite(sdl,""));
+	std::shared_ptr<Sprite> sprite6 (new Sprite(sdl,""));
+	std::shared_ptr<Sprite> sprite8 (new Sprite(sdl,""));
 	sprite2->set_texture(sdl->create_map_texture(LINES,COLUMNS,BLOCK_SIZE_X,BLOCK_SIZE_Y,thickness,r,g,b));
-	sprite->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,block_r,block_g,block_b));
+	sprite7->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,block_r,block_g,block_b));
+	sprite4->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,(block_r+100)%256,block_g,block_b));
+	sprite5->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,block_r,(block_g+100)%256,block_b));
+	sprite6->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,block_r,block_g,(block_b+100)%256));
+	sprite->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,(block_r+100)%256,block_g,(block_b+100)%256));
+	sprite8->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,block_r,(block_g+100)%256,(block_b+100)%256));
 	std::shared_ptr<Sprite> sprite3 (new Sprite(sdl, "../assets/score.png"));
 	std::shared_ptr<Map> map (new Map(COLUMNS,LINES,BLOCK_SIZE_X,BLOCK_SIZE_Y));
 	std::shared_ptr<Image> img (new Image(SHIFT_X, SHIFT_Y,BLOCK_SIZE_X*COLUMNS,BLOCK_SIZE_Y*LINES,sprite2));
@@ -79,7 +89,11 @@ int main(){
 	std::shared_ptr<Collision> collision (new Collision(map));
 	std::vector<std::shared_ptr<Sprite>> vecin;
 	vecin.push_back(sprite);
-	vecin.push_back(sprite2);
+	vecin.push_back(sprite7);
+	vecin.push_back(sprite4);
+	vecin.push_back(sprite5);
+	vecin.push_back(sprite6);
+	vecin.push_back(sprite8);
 	map->set_sprites(vecin);
 	std::shared_ptr<BlockPosition> blk_pos(new BlockPosition(SHIFT_X, SHIFT_Y, sdl));
 	std::shared_ptr<Keyboard> key (new Keyboard(block, keyboard_time, num_lines));
@@ -98,11 +112,11 @@ int main(){
 	while(1){
 		if(key->Quit()) break;
 
-		memset(recv, 0, 1000);
-		meu_socket.receive_from(boost::asio::buffer(recv, 1000), remote_endpoint);
-		for(letter = 999; recv[letter] != '}'; letter--);
+		memset(recv, 0, 2000);
+		meu_socket.receive_from(boost::asio::buffer(recv, 2000), remote_endpoint);
+		for(letter = 1999; recv[letter] != '}'; letter--);
 		recv[letter+1] = '\0';		
-
+		
 		j = json::parse(recv);
 		
 		if(j["Over"] == true) break;
@@ -113,23 +127,27 @@ int main(){
 		player_num = j["Players"].size();
 		for(int plyr = 0; plyr < player_num; plyr++){
 			plyr_points = j["Players"][plyr]["player"]["points"];
-			plyr_x = j["Players"][plyr]["block"]["x"];
-			plyr_y = j["Players"][plyr]["block"]["y"];
 			
-			std::shared_ptr<Bloco> plyr_block (new Bloco(plyr_x,plyr_y,format->get_random(),sprite,BLOCK_SIZE_Y,BLOCK_SIZE_X));
-			plyr_block->set_formato(j["Players"][plyr]["block"]["formato"]);
-			tmp_prints = blk_pos->create_image_vector(plyr_block);
-			prints.insert(prints.end(), tmp_prints.begin(),tmp_prints.end());		
-			tmp_prints = blk_pos->create_score_image(plyr_points, SCREEN_W*3/4-3*BLOCK_SIZE_X, (4+2*player_num)*BLOCK_SIZE_Y, BLOCK_SIZE_X);
+			tmp_prints = blk_pos->create_score_image(plyr_points, SCREEN_W*3/4-3*BLOCK_SIZE_X, (4+2*plyr)*BLOCK_SIZE_X, BLOCK_SIZE_X);
 			prints.insert(prints.end(), tmp_prints.begin(),tmp_prints.end());		
 		}
-
+		
 		prints.insert(prints.end(), score);		
 		prints.insert(prints.begin(),img);
 
 		view->render(prints);
 	
+		key->update_pressed_key();
+
+		j = *key;
+		j["Quit"] = false;
+
+		meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
 	}
+
+	j["Quit"] = true;
+
+	meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
 
 	return 0;
 }
