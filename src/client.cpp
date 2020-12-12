@@ -27,14 +27,15 @@
 #include <string>
 #include <boost/asio.hpp>
 
+#define IP "127.0.0.1"
+
 using boost::asio::ip::udp;
 
 int main(){
 	boost::asio::io_service io_service;
 	udp::endpoint local_endpoint(udp::v4(), 0);
 	udp::socket meu_socket(io_service, local_endpoint);
-	boost::asio::ip::address ip_remoto =
-	boost::asio::ip::address::from_string("127.0.0.1");
+	boost::asio::ip::address ip_remoto = boost::asio::ip::address::from_string(IP);
 	udp::endpoint remote_endpoint(ip_remoto, 9001);
 	std::string v("Eu quero algo de volta\n");
 	meu_socket.send_to(boost::asio::buffer(v), remote_endpoint);
@@ -128,7 +129,10 @@ int main(){
 		for(int plyr = 0; plyr < player_num; plyr++){
 			plyr_points = j["Players"][plyr]["player"]["points"];
 			
-			tmp_prints = blk_pos->create_score_image(plyr_points, SCREEN_W*3/4-3*BLOCK_SIZE_X, (4+2*plyr)*BLOCK_SIZE_X, BLOCK_SIZE_X);
+			tmp_prints = blk_pos->create_block_image(SCREEN_W*3/4-3*BLOCK_SIZE_X, (5+2*plyr)*BLOCK_SIZE_X, BLOCK_SIZE_X,vecin[plyr%vecin.size()]);
+			prints.insert(prints.end(), tmp_prints.begin(),tmp_prints.end());		
+			
+			tmp_prints = blk_pos->create_score_image(plyr_points, SCREEN_W*3/4-2*BLOCK_SIZE_X, (5+2*plyr)*BLOCK_SIZE_X, BLOCK_SIZE_X);
 			prints.insert(prints.end(), tmp_prints.begin(),tmp_prints.end());		
 		}
 		

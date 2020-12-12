@@ -70,3 +70,9 @@ std::vector<std::shared_ptr<Image>> BlockPosition::create_score_image(int num, i
 		prints.push_back(std::shared_ptr<Image>(new Image(x_0+i*size,y_0,size,size, this->numbers[points%10])));
 	return prints;
 }
+
+std::vector<std::shared_ptr<Image>> BlockPosition::create_block_image(int x_0, int y_0, int size, std::shared_ptr<Sprite> sprite){
+	std::vector<std::shared_ptr<Image>> prints;
+	prints.push_back(std::shared_ptr<Image>(new Image(x_0,y_0,size,size,sprite)));
+	return prints;
+}

@@ -55,4 +55,6 @@ class BlockPosition{
 		* \return std::vector<std::shared_ptr<Image>> Retorna um vetor de Images com os números
 		*/
 		std::vector<std::shared_ptr<Image>> create_score_image(int num, int x_0, int y_0, int size);
+		std::vector<std::shared_ptr<Image>> create_block_image(int x_0, int y_0, int size, std::shared_ptr<Sprite> sprite);
+
 }; 
