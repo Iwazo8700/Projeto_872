@@ -9,7 +9,7 @@ ConfigReader::ConfigReader(const char* config_file){
 	this->shift_y = -1;
 	this->block_size_x = -1;	
 	this->block_size_y = -1;
-
+	this->ip = "127.0.0.1";
 	this->screen_width=440; 
 	this->screen_height=440;
 	this->lines=20; 
@@ -29,7 +29,7 @@ ConfigReader::ConfigReader(const char* config_file){
 	this->keyboard_time=50;
 	this->normal=10; 
 
-	while(getline(file, text)){
+	while(getline(file, text)){ 
 		if(text.size() == 0 || text.at(0) == '#')
 			continue;
 		else if(text.find("screen_width") != std::string::npos)
@@ -74,6 +74,8 @@ ConfigReader::ConfigReader(const char* config_file){
 			this->block_g = this->get_value(text);
 		else if(text.find("block_b") != std::string::npos)
 			this->block_b = this->get_value(text);
+		else if(text.find("host_ip") != std::string::npos)
+			this->ip = this->get_string(text);
 		else if(text.find("normal") != std::string::npos){
 			if(text.find("true") != std::string::npos)
 				this->normal = true;
@@ -131,14 +133,23 @@ int ConfigReader::get_block_b(){
 	return this->block_b;
 }
 
+std::string ConfigReader::get_ip(){
+	return this->ip;
+}
+
 int ConfigReader::get_decrease_n(){
 	return this->decrease_n;
 }
 
 int ConfigReader::get_value(std::string text){
 	std::size_t first_num = text.find_first_of("0123456789"); 
-	std::size_t last_num = text.find_last_of("0123456789"); 
+	std::size_t last_num = text.find_last_of("0123456789");
 	return std::stoi(text.substr(first_num, last_num-first_num+1));
+}
+
+std::string ConfigReader::get_string(std::string text){
+	std::size_t last_num = text.find_last_of(" ="); 
+	return text.substr(last_num+1, text.size()-last_num);
 }
 
 int ConfigReader::get_screen_width(){

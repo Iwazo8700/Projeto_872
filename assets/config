@@ -47,3 +47,5 @@ block_b = 255
 
 # Define se a ia (false) ou o player (true) jogará
 normal = true
+
+host_ip = 127.0.0.1

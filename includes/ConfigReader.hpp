@@ -32,6 +32,7 @@ class ConfigReader{
 		int r,g,b; /*<! Cores rgb para as linhas do mapa*/
 		int block_r,block_g,block_b; /*<! Cores rgb para o bloco*/
 		int thickness; /*<! Grossura das linhas do mapa*/
+		std::string ip;
 		bool normal; /*<! true se o jogo é normal, false caso seja a ia jogando*/
 	public:
 		/*! Construtor da classe ConfigReader
@@ -45,6 +46,8 @@ class ConfigReader{
 		int get_screen_width();	
 		int get_screen_height();	
 		int get_lines();
+		std::string get_ip();
+		std::string get_string(std::string text);
 		int get_thickness();
 		int get_block_r();
 		int get_block_g();

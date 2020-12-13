@@ -27,11 +27,12 @@
 #include <string>
 #include <boost/asio.hpp>
 
-#define IP "127.0.0.1"
-
 using boost::asio::ip::udp;
 
 int main(){
+	std::shared_ptr<ConfigReader> config (new ConfigReader("../assets/config"));
+	std::string IP = config->get_ip();
+
 	boost::asio::io_service io_service;
 	udp::endpoint local_endpoint(udp::v4(), 0);
 	udp::socket meu_socket(io_service, local_endpoint);
@@ -40,7 +41,6 @@ int main(){
 	std::string v("Eu quero algo de volta\n");
 	meu_socket.send_to(boost::asio::buffer(v), remote_endpoint);
 
-	std::shared_ptr<ConfigReader> config (new ConfigReader("../assets/config"));
 
 	int speed = config->get_speed();
 	int delay = config->get_delay();
