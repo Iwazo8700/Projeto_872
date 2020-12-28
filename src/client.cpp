@@ -30,17 +30,10 @@
 using boost::asio::ip::udp;
 
 int main(){
+
+	//Configura definicoes com base no arquivo de configuracao
 	std::shared_ptr<ConfigReader> config (new ConfigReader("../assets/config"));
 	std::string IP = config->get_ip();
-
-	boost::asio::io_service io_service;
-	udp::endpoint local_endpoint(udp::v4(), 0);
-	udp::socket meu_socket(io_service, local_endpoint);
-	boost::asio::ip::address ip_remoto = boost::asio::ip::address::from_string(IP);
-	udp::endpoint remote_endpoint(ip_remoto, 9001);
-	std::string v("Conectando\n");
-	meu_socket.send_to(boost::asio::buffer(v), remote_endpoint);
-
 
 	int speed = config->get_speed();
 	int delay = config->get_delay();
@@ -65,6 +58,7 @@ int main(){
 	int block_b = config->get_block_b();
 	bool normal = config->get_normal();
 
+	// Inicializa variaveis necessarias para o programa
 	std::shared_ptr<Formato> format (new Formato("../assets/Formatos.dat"));
 	std::shared_ptr<SDL_Model> sdl (new SDL_Model(SCREEN_W,SCREEN_H));
 	std::shared_ptr<View> view (new View(sdl));
@@ -110,28 +104,47 @@ int main(){
 	std::vector<std::shared_ptr<Image>> tmp_prints;
 	int letter;
 
+	// Configura udp e conecta com servidor
+	boost::asio::io_service io_service;
+	udp::endpoint local_endpoint(udp::v4(), 0);
+	udp::socket meu_socket(io_service, local_endpoint);
+	boost::asio::ip::address ip_remoto = boost::asio::ip::address::from_string(IP);
+	udp::endpoint remote_endpoint(ip_remoto, 9001);
+	std::string v("Conectando\n");
+	meu_socket.send_to(boost::asio::buffer(v), remote_endpoint);
+
 	// Espera mensagem do servidor confirmando conexao
 	meu_socket.receive_from(boost::asio::buffer(recv, 2000), remote_endpoint);
 
 	while(1){
+
+		// Caso o jogador feche a tela, sai do jogo e envia uma mensagem de desconexao para o servidor
 		if(key->Quit()){
 			j["Quit"] = true;
 			meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
 			break;
 		}
 
+		// Limpa vetor que recebera a mensagem para nao haver lixo nele
 		memset(recv, 0, 2000);
+		
+		// Recebe mensagem do servidor
 		meu_socket.receive_from(boost::asio::buffer(recv, 2000), remote_endpoint);
+
+		// Limpa a mensagem
 		for(letter = 1999; recv[letter] != '}'; letter--);
 		recv[letter+1] = '\0';		
 		
 		j = json::parse(recv);
 		
+		// Verifica se o jogo terminou ou ainda nao, se tiver sai do jogo
 		if(j["Over"] == true) break;
 
+		// Le o mapa da mensagem recebida e cria sua imagem	
 		map->set_map(j["Map"]["map"]);
 		prints = blk_pos->create_image_vector(map);
 
+		// Cria as imagens com as pontuacoes dos jogadores
 		player_num = j["Players"].size();
 		for(int plyr = 0; plyr < player_num; plyr++){
 			plyr_points = j["Players"][plyr]["player"]["points"];
@@ -146,16 +159,21 @@ int main(){
 		prints.insert(prints.end(), score);		
 		prints.insert(prints.begin(),img);
 
+		// Renderiza imagens
 		view->render(prints);
 	
+		// Verifica se o jogador clicou em alguma tecla
 		key->update_pressed_key();
 
+
+		// Envia para o servidor um json contendo a tecla clicada pelo jogador
 		j = *key;
 		j["Quit"] = false;
 
 		meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
 	}
-/*
+
+	// Caso o jogo tenha terminado, renderiza na tela apenas as pontuacoes dos jogadores
 	if(j["Over"] == true){
 		std::shared_ptr<Image> score (new Image(SCREEN_W/2-6*BLOCK_SIZE_X,1*BLOCK_SIZE_Y,12*BLOCK_SIZE_X,4*BLOCK_SIZE_Y,sprite3));
 		std::vector<std::shared_ptr<Image>> end_prints;
@@ -181,7 +199,7 @@ int main(){
 			
 			view->render(end_prints);
 		}
-	}*/
+	}
 	
 	return 0;
 }
