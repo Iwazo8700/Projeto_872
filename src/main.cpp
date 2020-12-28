@@ -16,6 +16,7 @@
 #include "Container.hpp"
 #include "IAFunctions.hpp"
 #include <memory>
+#include <atomic>
 #include <vector>
 #include <map>
 #include <iostream>
@@ -43,6 +44,10 @@ int num_lines;
 int COLUMNS;
 std::mutex mtx;
 
+// Variavel compartilhada que serve de flag para avisar para a thread que o programa acabou
+std::atomic<bool> end_program(false);
+
+
 /*
 	Funcao que sera executada em uma thread separada do programa principal.
 	Fica em loop recebendo mensagens que podem ser:
@@ -62,14 +67,22 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 	std::map<udp::endpoint,	std::shared_ptr<Player>> player_map; // Map entre os players e seus correspondentes IPs
 	int counter = 0;  // Posicao inicial do bloco do novo player
 	char character;
+	
+	std::cout << "Servidor Inicializado." << std::endl;	
 
 	while(1){
+		if(end_program)
+			break;
+
 		// Zera o vetor que recebe a mensagem para nao haver lixo nele
 		memset(v,0,100);
 	
 		// Recebe mensagem
 		my_socket.receive_from(boost::asio::buffer(v,120),tmp_remote_endpoint);
 		
+		if(end_program)
+			break;
+
 		// Se o IP do qual a mensagem foi recebida for novo, adiciona um novo Player ao jogo
 		if(player_map.count(tmp_remote_endpoint) == 0){
 			// Cria novo Player, com seu bloco e teclado
@@ -87,6 +100,7 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 			player_map.insert(std::pair<udp::endpoint,std::shared_ptr<Player>>(tmp_remote_endpoint,player));
 
 			counter += 4; // Atualiza a posicao para os blocos dos player nao surgirem no mesmo local
+			std::cout << "Novo Player Conectado" << std::endl;
 		}else{
 			// Caso o IP da mensagem ja esteja no jogo
 
@@ -107,6 +121,8 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 				remote_endpoint->resize(std::remove(remote_endpoint->begin(),remote_endpoint->end(),tmp_remote_endpoint)-remote_endpoint->begin());
 	
 				mtx.unlock();
+
+				std::cout << "Player Saiu" << std::endl;
 			}else{
 				// Caso seja um comando
 		
@@ -125,6 +141,7 @@ int main(){
 
 	// Inicializa configuracoes do jogo a partir do arquivo de configuracao
 	std::shared_ptr<ConfigReader> config (new ConfigReader("../assets/config"));
+
 
 	speed = config->get_speed();
 	delay = config->get_delay();
@@ -146,7 +163,7 @@ int main(){
 	std::shared_ptr<std::vector<std::shared_ptr<Player>>> player_vec(new std::vector<std::shared_ptr<Player>>(0));
 	std::shared_ptr<MainController> ctrl;
 	
-	ctrl = std::shared_ptr<MainController>(new MainController(map, *player_vec, format));
+	ctrl = std::shared_ptr<MainController>(new MainController(map, player_vec, format));
 
 	json j;
 
@@ -162,24 +179,21 @@ int main(){
 	std::thread communication(udp_connection, player_vec, remote_endpoint, std::ref(my_socket));
 
 	while(1){
+
 		auto start = std::chrono::steady_clock::now(); // Contador para regular FPS
 		
-		mtx.lock();
-		
-		// Atualiza vetor com os players na classe de controle
-		ctrl->set_players(*player_vec);
 		// Executa um passo do programa
+		mtx.lock();
 		ctrl->step();
-	
 		mtx.unlock();
 
 		// Se todos o player morreram, acaba o jogo
-		
+		end_game = true;		
 		for(auto plyr : *player_vec)
-			if(!plyr->is_alive())
-				end_game = true;
+			if(plyr->is_alive())
+				end_game = false;
 
-		if(end_game)
+		if(end_game && player_vec->size())
 			break;		
 
 		// Atualiza informacoes de cada player
@@ -254,9 +268,22 @@ int main(){
 	
 
 	// Caso o jogo tenha acabado, envia uma mensagem avisando que o jogo acabou para cada player
+	int tmp_count = 0;
+	std::vector<Container> containers(player_vec->size());
+
+	// Cria um mapa onde 0 corresponde a nenhuma peca e qualquer outro numero corresponde a uma cor
+	for(auto plyr : *player_vec){
+		containers[tmp_count++].set_data(*plyr,plyr->is_alive());
+	}
+
+	j["Players"] = containers;
 	j["Over"] = true;
 	for(auto endpoint : *remote_endpoint)
 		my_socket.send_to(boost::asio::buffer(j.dump()), endpoint);
-		
+
+	// Define a flag de termino de programa como true e espera a thread acabar
+	end_program = true;
+	communication.join();	
+
 	return 0;
 }

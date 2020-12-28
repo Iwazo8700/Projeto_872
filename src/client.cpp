@@ -38,7 +38,7 @@ int main(){
 	udp::socket meu_socket(io_service, local_endpoint);
 	boost::asio::ip::address ip_remoto = boost::asio::ip::address::from_string(IP);
 	udp::endpoint remote_endpoint(ip_remoto, 9001);
-	std::string v("Eu quero algo de volta\n");
+	std::string v("Conectando\n");
 	meu_socket.send_to(boost::asio::buffer(v), remote_endpoint);
 
 
@@ -111,7 +111,11 @@ int main(){
 	int letter;
 
 	while(1){
-		if(key->Quit()) break;
+		if(key->Quit()){
+			j["Quit"] = true;
+			meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
+			break;
+		}
 
 		memset(recv, 0, 2000);
 		meu_socket.receive_from(boost::asio::buffer(recv, 2000), remote_endpoint);
@@ -149,10 +153,32 @@ int main(){
 		meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
 	}
 
-	j["Quit"] = true;
+	if(j["Over"] == true){
+		std::shared_ptr<Image> score (new Image(SCREEN_W/2-6*BLOCK_SIZE_X,1*BLOCK_SIZE_Y,12*BLOCK_SIZE_X,4*BLOCK_SIZE_Y,sprite3));
+		std::vector<std::shared_ptr<Image>> end_prints;
 
-	meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
+		player_num = j["Players"].size();
+		for(int plyr = 0; plyr < player_num; plyr++){
+			plyr_points = j["Players"][plyr]["player"]["points"];
+		
+			tmp_prints = blk_pos->create_block_image(SCREEN_W/2-8*BLOCK_SIZE_X, (6+4*plyr)*BLOCK_SIZE_X, BLOCK_SIZE_X*2,vecin[plyr%vecin.size()]);
+			end_prints.insert(end_prints.end(), tmp_prints.begin(),tmp_prints.end());		
+		
+			tmp_prints = blk_pos->create_score_image(plyr_points, SCREEN_W/2-6*BLOCK_SIZE_X, (6+4*plyr)*BLOCK_SIZE_X, BLOCK_SIZE_X*2);
+			end_prints.insert(end_prints.end(), tmp_prints.begin(),tmp_prints.end());		
+		}
+	
+		end_prints.insert(end_prints.end(), score);		
 
+		std::string end_message("Finalizado\n");
+		meu_socket.send_to(boost::asio::buffer(end_message), remote_endpoint);
+		while(1){
+			if(key->Quit())
+				break;
+			
+			view->render(end_prints);
+		}
+	}
 
 	return 0;
 }

@@ -26,7 +26,7 @@ class MainController{
 		std::shared_ptr<Formato> formats; /*<! Formats contendo todos os formatos possíveis para as peças*/
 		std::shared_ptr<Map> map; /*<! Ponteiro para o Map que será usado*/
 		std::shared_ptr<Collision> collision; /*<! Collision que verificará colisões*/
-		std::vector<std::shared_ptr<Player>> players; /*<! Lista com todos os Players presentes*/
+		std::shared_ptr<std::vector<std::shared_ptr<Player>>> players; /*<! Lista com todos os Players presentes*/
 		std::vector<std::shared_ptr<IAFunctions>> iafunc_vec;
 	public:
 		/*! \brief Construtor da MainController
@@ -37,7 +37,7 @@ class MainController{
 		* \param std::vector<std::shared_ptr<Player>> players Lista com todos os players do jogo já alocado
 		* \param std::shared_ptr<Formato> formato Instância já alocada do objeto contendo todas as formas possíveis para uma peça
 		*/
-		MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato);
+		MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato);
 		/*! \brief Construtor da MainController para IA
 		*
 		* Inicializa todas as variáveis internas da classe
@@ -47,7 +47,7 @@ class MainController{
 		* \param std::shared_ptr<Formato> formato Instância já alocada do objeto contendo todas as formas possíveis para uma peça
 		* \param std::vector<std::shared_ptr<IAFuntions>> iafunc_vec Vetor com os objetos controlados pela IA
 		*/
-		MainController(std::shared_ptr<Map> map, std::vector<std::shared_ptr<Player>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec);
+		MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec);
 		/*! \brief Verifica se a peça do Player deve cair um bloco automaticamente.
 		* Verifica usando os atributos speed e time do Player além do tempo atual para verificar se o tempo entre os movimentos já passou, de modo
 		* que a peça deveria cair mais um bloco.
@@ -74,7 +74,7 @@ class MainController{
 		* \return std::shared_ptr<Bloco> ponteiro para o Bloco aleatório gerado
 		*/
 		std::shared_ptr<Bloco> create_random_block(int x, int y);
-		void set_players(std::vector<std::shared_ptr<Player>> player);
+		void set_players(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player);
 		/*! \brief Exclui as linhas completas (todos valores dela diferentes de 0) do mapa e insere novas linhas vazias
 		*
 		* \return int Número de linhas completas que foram excluídas
