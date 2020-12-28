@@ -153,5 +153,6 @@ int main(){
 
 	meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
 
+
 	return 0;
 }

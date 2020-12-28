@@ -68,7 +68,7 @@ void MainController::step(){
 					continue;
 				}
 				this->map->add_to_map(player->get_piece(),player_num);
-				player->set_piece(this->create_random_block(player->get_piece()->get_initial_x(),player->get_piece()->get_initial_x()));
+				player->set_piece(this->create_random_block(player->get_piece()->get_initial_x(),player->get_piece()->get_initial_y()));
 				points = this->update_board();
 				switch(points){
 					case 1:
@@ -119,7 +119,7 @@ void MainController::set_players(std::vector<std::shared_ptr<Player>> players){
 
 std::shared_ptr<Bloco> MainController::create_random_block(int x, int y){
 	std::vector<std::vector<bool>> vec = this->formats->get_random();
-	return (std::shared_ptr<Bloco>) new Bloco(x, -1*vec.size(), vec);
+	return (std::shared_ptr<Bloco>) new Bloco(x, y/*-1*vec.size()*/, vec);
 }
 
 

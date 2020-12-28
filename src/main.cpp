@@ -32,6 +32,7 @@
 
 using boost::asio::ip::udp;
 
+// Variaveis necessarias tanto dentro da Thread quanto fora
 int speed;
 int delay;
 int keyboard_time;
@@ -42,51 +43,76 @@ int num_lines;
 int COLUMNS;
 std::mutex mtx;
 
+/*
+	Funcao que sera executada em uma thread separada do programa principal.
+	Fica em loop recebendo mensagens que podem ser:
+		- Novo Player   --> Adiciona Player no jogo
+		- Comando       --> Atualiza Teclado do Player para que o comando recebido seja executado a seguir
+		- Player Saindo --> Retira o Player do jogo
+*/
 
-void udp_connection(std::vector<std::shared_ptr<Player>>& player_vec,std::vector<udp::endpoint>& remote_endpoint,udp::socket& my_socket){
+void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player_vec,std::shared_ptr<std::vector<udp::endpoint>> remote_endpoint,udp::socket& my_socket){
+	// Inicializa variaveis necessarias para a criacao dos players
 	std::shared_ptr<Formato> format (new Formato("../assets/Formatos.dat"));
-	char v[100];
-	json j;	
+	
+	char v[100]; // Vetor que recebera a mensagem
+	json j;	     // Objeto Json para receber as informacoes
 
-	udp::endpoint tmp_remote_endpoint;
-	std::map<udp::endpoint,	std::shared_ptr<Player>> player_map;
-	int counter = 0;
+	udp::endpoint tmp_remote_endpoint; // Guaradara o IP da mensagem recebida
+	std::map<udp::endpoint,	std::shared_ptr<Player>> player_map; // Map entre os players e seus correspondentes IPs
+	int counter = 0;  // Posicao inicial do bloco do novo player
 	char character;
 
 	while(1){
+		// Zera o vetor que recebe a mensagem para nao haver lixo nele
 		memset(v,0,100);
+	
+		// Recebe mensagem
 		my_socket.receive_from(boost::asio::buffer(v,120),tmp_remote_endpoint);
-
+		
+		// Se o IP do qual a mensagem foi recebida for novo, adiciona um novo Player ao jogo
 		if(player_map.count(tmp_remote_endpoint) == 0){
+			// Cria novo Player, com seu bloco e teclado
 			std::shared_ptr<Bloco> block (new Bloco(counter%(COLUMNS-4),-5,format->get_random()));
 			std::shared_ptr<Keyboard> key (new Keyboard(block, keyboard_time, num_lines));
 			std::shared_ptr<Player> player (new Player(block, key, speed));
 			std::vector<std::shared_ptr<Player>> tmp_vec;
 			std::vector<udp::endpoint> tmp_vec2;
+
+			// Atualiza vetor com os IPs que estao jogando
 			mtx.lock();
-			remote_endpoint.push_back(tmp_remote_endpoint);	
-			player_vec.push_back(player);
+			remote_endpoint->push_back(tmp_remote_endpoint);	
+			player_vec->push_back(player);
 			mtx.unlock();
 			player_map.insert(std::pair<udp::endpoint,std::shared_ptr<Player>>(tmp_remote_endpoint,player));
-			counter += 4;
+
+			counter += 4; // Atualiza a posicao para os blocos dos player nao surgirem no mesmo local
 		}else{
+			// Caso o IP da mensagem ja esteja no jogo
+
+			// Pega as informacoes do json recebido
 			int letter = 0;
 			for(letter = 99; v[letter] != '}'; letter--);
 			v[letter+1] = '\0';		
 			j = json::parse(v);
+
 			if(j["Quit"] == true){
-				std::vector<std::shared_ptr<Player>> tmp_vec;
-				std::vector<udp::endpoint> tmp_vec2;
+				// Caso seja uma mensagem de sair do jogo
+
+				// Exlui player dos vetores e maps que o guardavam, tirando-o do jogo
 				mtx.lock();
-				remove_copy(player_vec.begin(),player_vec.end(),tmp_vec.begin(),player_map.at(tmp_remote_endpoint));
+	
+				player_vec->resize(std::remove(player_vec->begin(),player_vec->end(),player_map.at(tmp_remote_endpoint))-player_vec->begin());
 				player_map.erase(tmp_remote_endpoint);
-				remove_copy(remote_endpoint.begin(),remote_endpoint.end(),tmp_vec2.begin(),tmp_remote_endpoint);
-				player_vec.assign(tmp_vec.begin(),tmp_vec.end());
-				remote_endpoint.assign(tmp_vec2.begin(),tmp_vec2.end());
-				std::cout << "Excluido" << std::endl;
+				remote_endpoint->resize(std::remove(remote_endpoint->begin(),remote_endpoint->end(),tmp_remote_endpoint)-remote_endpoint->begin());
+	
 				mtx.unlock();
 			}else{
+				// Caso seja um comando
+		
 				character = j["pressed_key"].get<char>();
+
+				// Atualizado o teclado do Player correspondente, de modo que o comando sera executado na iteracao seguinte do step() na main
 				mtx.lock();
 				player_map.at(tmp_remote_endpoint)->get_keyboard()->set_pressed_key(character);
 				mtx.unlock();
@@ -96,6 +122,8 @@ void udp_connection(std::vector<std::shared_ptr<Player>>& player_vec,std::vector
 }
 
 int main(){
+
+	// Inicializa configuracoes do jogo a partir do arquivo de configuracao
 	std::shared_ptr<ConfigReader> config (new ConfigReader("../assets/config"));
 
 	speed = config->get_speed();
@@ -107,47 +135,64 @@ int main(){
 	num_lines = config->get_num_lines();
 	COLUMNS = config->get_columns();
 
+	bool end_game = false; // Variavel que controla quando o jogo deve acabar
+
+	// Cria Mapa e variaveis necessarias para o jogo e controle dos jogadores
 	std::shared_ptr<Formato> format (new Formato("../assets/Formatos.dat"));
 	std::shared_ptr<Map> map (new Map(COLUMNS,LINES));
 	std::shared_ptr<Map> tmp_map (new Map(COLUMNS,LINES));
 	std::shared_ptr<Collision> collision (new Collision(map));
 	
-	std::vector<std::shared_ptr<Player>> player_vec;
+	std::shared_ptr<std::vector<std::shared_ptr<Player>>> player_vec(new std::vector<std::shared_ptr<Player>>(0));
 	std::shared_ptr<MainController> ctrl;
 	
-	ctrl = std::shared_ptr<MainController>(new MainController(map, player_vec, format));
+	ctrl = std::shared_ptr<MainController>(new MainController(map, *player_vec, format));
 
 	json j;
 
 	std::shared_ptr<Keyboard> key (new Keyboard(keyboard_time, num_lines));
 
+	// Configura udp
 	boost::asio::io_service my_io_service;
 	udp::endpoint local_endpoint(udp::v4(), 9001);
 	udp::socket my_socket(my_io_service,local_endpoint);
-	std::vector<udp::endpoint> remote_endpoint;
+	std::shared_ptr<std::vector<udp::endpoint>> remote_endpoint(new std::vector<udp::endpoint>(0));
 
-	std::thread communication(udp_connection, std::ref(player_vec), std::ref(remote_endpoint), std::ref(my_socket));
+	// Cria Thread que ficara executando communication para receber as informacoes pelo udp
+	std::thread communication(udp_connection, player_vec, remote_endpoint, std::ref(my_socket));
 
 	while(1){
-		auto start = std::chrono::steady_clock::now();
-		if(key->Quit()) break;
+		auto start = std::chrono::steady_clock::now(); // Contador para regular FPS
 		
-		ctrl->set_players(player_vec);	
-	
 		mtx.lock();
+		
+		// Atualiza vetor com os players na classe de controle
+		ctrl->set_players(*player_vec);
+		// Executa um passo do programa
 		ctrl->step();
+	
 		mtx.unlock();
 
-		for(auto plyr : player_vec)
-			if(plyr->is_alive())
-				break;
-		for(auto plyr : player_vec)
+		// Se todos o player morreram, acaba o jogo
+		
+		for(auto plyr : *player_vec)
+			if(!plyr->is_alive())
+				end_game = true;
+
+		if(end_game)
+			break;		
+
+		// Atualiza informacoes de cada player
+		for(auto plyr : *player_vec)
 			plyr->set_speed(speed - ((plyr->get_lines_completed()/decrease_n)*decrease));
 
+		// Cria json que contera as informacoes que devem ser colocadas na tela para cada player
 		int tmp_count = 0;
 		tmp_map->set_map(map->get_map());
-		std::vector<Container> containers(player_vec.size());
-		for(auto plyr : player_vec){
+		std::vector<Container> containers(player_vec->size());
+
+		// Cria um mapa onde 0 corresponde a nenhuma peca e qualquer outro numero corresponde a uma cor
+		for(auto plyr : *player_vec){
 			containers[tmp_count++].set_data(*plyr,plyr->is_alive());
 			tmp_map->add_to_map(plyr->get_piece(),tmp_count);
 		}
@@ -156,9 +201,12 @@ int main(){
 		j["Map"] = *tmp_map;
 		j["Over"] = false;
 		
-		for(auto endpoint : remote_endpoint)
+		// Envia o json para cada jogador conectado
+		for(auto endpoint : *remote_endpoint)
 			my_socket.send_to(boost::asio::buffer(j.dump()), endpoint);
 
+
+		// COntrole do FPS
 		auto end = std::chrono::steady_clock::now();
 		std::chrono::duration<double> diff = end-start;
 		if(diff.count()/1000 < delay)
@@ -204,8 +252,10 @@ int main(){
 		*/
 	}
 	
+
+	// Caso o jogo tenha acabado, envia uma mensagem avisando que o jogo acabou para cada player
 	j["Over"] = true;
-	for(auto endpoint : remote_endpoint)
+	for(auto endpoint : *remote_endpoint)
 		my_socket.send_to(boost::asio::buffer(j.dump()), endpoint);
 		
 	return 0;
