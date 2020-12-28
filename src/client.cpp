@@ -104,11 +104,14 @@ int main(){
 
 	int player_num = 0;
 	int plyr_x, plyr_y,plyr_points;
-	char recv[1000];
+	char recv[2000];
 	std::vector<std::vector<bool>> plyr_format;
 	std::vector<std::shared_ptr<Image>> prints;
 	std::vector<std::shared_ptr<Image>> tmp_prints;
 	int letter;
+
+	// Espera mensagem do servidor confirmando conexao
+	meu_socket.receive_from(boost::asio::buffer(recv, 2000), remote_endpoint);
 
 	while(1){
 		if(key->Quit()){
@@ -152,7 +155,7 @@ int main(){
 
 		meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
 	}
-
+/*
 	if(j["Over"] == true){
 		std::shared_ptr<Image> score (new Image(SCREEN_W/2-6*BLOCK_SIZE_X,1*BLOCK_SIZE_Y,12*BLOCK_SIZE_X,4*BLOCK_SIZE_Y,sprite3));
 		std::vector<std::shared_ptr<Image>> end_prints;
@@ -178,7 +181,7 @@ int main(){
 			
 			view->render(end_prints);
 		}
-	}
-
+	}*/
+	
 	return 0;
 }

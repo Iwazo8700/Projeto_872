@@ -67,6 +67,7 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 	std::map<udp::endpoint,	std::shared_ptr<Player>> player_map; // Map entre os players e seus correspondentes IPs
 	int counter = 0;  // Posicao inicial do bloco do novo player
 	char character;
+	std::string confirmation_message("Pedido para entrar recebido");
 	
 	std::cout << "Servidor Inicializado." << std::endl;	
 
@@ -89,8 +90,6 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 			std::shared_ptr<Bloco> block (new Bloco(counter%(COLUMNS-4),-5,format->get_random()));
 			std::shared_ptr<Keyboard> key (new Keyboard(block, keyboard_time, num_lines));
 			std::shared_ptr<Player> player (new Player(block, key, speed));
-			std::vector<std::shared_ptr<Player>> tmp_vec;
-			std::vector<udp::endpoint> tmp_vec2;
 
 			// Atualiza vetor com os IPs que estao jogando
 			mtx.lock();
@@ -99,6 +98,7 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 			mtx.unlock();
 			player_map.insert(std::pair<udp::endpoint,std::shared_ptr<Player>>(tmp_remote_endpoint,player));
 
+			my_socket.send_to(boost::asio::buffer(confirmation_message), tmp_remote_endpoint);
 			counter += 4; // Atualiza a posicao para os blocos dos player nao surgirem no mesmo local
 			std::cout << "Novo Player Conectado" << std::endl;
 		}else{
