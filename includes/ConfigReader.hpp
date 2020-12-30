@@ -33,7 +33,7 @@ class ConfigReader{
 		int block_r,block_g,block_b; /*<! Cores rgb para o bloco*/
 		int thickness; /*<! Grossura das linhas do mapa*/
 		std::string ip;
-		bool normal; /*<! true se o jogo é normal, false caso seja a ia jogando*/
+		bool normal; /*<! true as peças colidem entre si*/
 	public:
 		/*! Construtor da classe ConfigReader
 		*

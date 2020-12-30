@@ -36,8 +36,9 @@ class MainController{
 		* \param std::shared_ptr<Map> map Mapa do jogo já alocado
 		* \param std::vector<std::shared_ptr<Player>> players Lista com todos os players do jogo já alocado
 		* \param std::shared_ptr<Formato> formato Instância já alocada do objeto contendo todas as formas possíveis para uma peça
+		* \param bool collision_type Define se as peças dos jogadores colidem entre si
 		*/
-		MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato);
+		MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato, bool collision_type);
 		/*! \brief Construtor da MainController para IA
 		*
 		* Inicializa todas as variáveis internas da classe
@@ -47,7 +48,7 @@ class MainController{
 		* \param std::shared_ptr<Formato> formato Instância já alocada do objeto contendo todas as formas possíveis para uma peça
 		* \param std::vector<std::shared_ptr<IAFuntions>> iafunc_vec Vetor com os objetos controlados pela IA
 		*/
-		MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec);
+		MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec, bool collision_type);
 		/*! \brief Verifica se a peça do Player deve cair um bloco automaticamente.
 		* Verifica usando os atributos speed e time do Player além do tempo atual para verificar se o tempo entre os movimentos já passou, de modo
 		* que a peça deveria cair mais um bloco.

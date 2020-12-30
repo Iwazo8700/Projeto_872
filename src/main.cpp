@@ -151,6 +151,7 @@ int main(){
 	LINES = config->get_lines();
 	num_lines = config->get_num_lines();
 	COLUMNS = config->get_columns();
+	bool normal = config->get_normal();
 
 	bool end_game = false; // Variavel que controla quando o jogo deve acabar
 
@@ -158,12 +159,12 @@ int main(){
 	std::shared_ptr<Formato> format (new Formato("../assets/Formatos.dat"));
 	std::shared_ptr<Map> map (new Map(COLUMNS,LINES));
 	std::shared_ptr<Map> tmp_map (new Map(COLUMNS,LINES));
-	std::shared_ptr<Collision> collision (new Collision(map));
+	std::shared_ptr<Collision> collision (new Collision(map, normal));
 	
 	std::shared_ptr<std::vector<std::shared_ptr<Player>>> player_vec(new std::vector<std::shared_ptr<Player>>(0));
 	std::shared_ptr<MainController> ctrl;
 	
-	ctrl = std::shared_ptr<MainController>(new MainController(map, player_vec, format));
+	ctrl = std::shared_ptr<MainController>(new MainController(map, player_vec, format,normal));
 
 	json j;
 

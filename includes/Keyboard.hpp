@@ -53,8 +53,10 @@ class Keyboard{
 		std::vector<std::vector<bool>> RotHoraria();
 		std::vector<std::vector<bool>> RotAnti();
 		int Space(std::shared_ptr<Collision> collision);
+		int Space(std::shared_ptr<Collision> collision, std::vector<std::shared_ptr<Bloco>> others);
 		int Desloc_Vert();
 		int Down(std::shared_ptr<Collision> collision);
+		int Down(std::shared_ptr<Collision> collision, std::vector<std::shared_ptr<Bloco>> others);
 		void set_pressed_key(char key);
 
 };

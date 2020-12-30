@@ -13,6 +13,7 @@
 
 class Collision{
 	private:
+		bool piece_collide; /*<! booleano que define se deve ou não haver colisão entre as peças dos jogadores*/
 		std::shared_ptr<Map> map; /*<! std::shared_ptr<Map> para o Map com o qual a colisão deve ser verificada*/
 	public:
 		/*! \brief Construtor da Collision
@@ -23,7 +24,7 @@ class Collision{
 		* \param std::shared_ptr<Map> map Map com o qual será verificada a colisão
 		* \return Nada (este é um construtor!)
 		* */
-		Collision(std::shared_ptr<Map> map);
+		Collision(std::shared_ptr<Map> map, bool piece_collide);
 		void set_map(std::shared_ptr<Map> map);
 
 		/*!

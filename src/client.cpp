@@ -81,7 +81,7 @@ int main(){
 	std::shared_ptr<Image> img (new Image(SHIFT_X, SHIFT_Y,BLOCK_SIZE_X*COLUMNS,BLOCK_SIZE_Y*LINES,sprite2));
 	std::shared_ptr<Image> end_screen (new Image(SCREEN_W/2-2*BLOCK_SIZE_X,SCREEN_H/2-2*BLOCK_SIZE_Y,4*BLOCK_SIZE_X,2*BLOCK_SIZE_Y,sprite3));
 	std::shared_ptr<Bloco> block (new Bloco(COLUMNS/2,-5,format->get_random(),sprite,BLOCK_SIZE_Y,BLOCK_SIZE_X));
-	std::shared_ptr<Collision> collision (new Collision(map));
+	std::shared_ptr<Collision> collision (new Collision(map,true));
 	std::vector<std::shared_ptr<Sprite>> vecin;
 	vecin.push_back(sprite);
 	vecin.push_back(sprite7);

@@ -87,6 +87,18 @@ int Keyboard::Desloc_Vert(){
 	return bloco->get_y();
 }
 
+int Keyboard::Space(std::shared_ptr<Collision> collision, std::vector<std::shared_ptr<Bloco>> others){
+	if(this->time_space+this->delay <= SDL_GetTicks()){
+		this->time_space = SDL_GetTicks();
+		if(this->pressed_key == SPACE) {
+			Down(collision, others);
+			return 1;
+		}
+	}
+	return 0;
+	
+}
+
 int Keyboard::Space(std::shared_ptr<Collision> collision){
 	if(this->time_space+this->delay <= SDL_GetTicks()){
 		this->time_space = SDL_GetTicks();
@@ -146,6 +158,13 @@ std::vector<std::vector<bool>> Keyboard::RotAnti(){
 
 int Keyboard::Down(std::shared_ptr<Collision> collision){
 	while(!collision->is_colliding(bloco))
+		this->bloco->set_y(this->bloco->get_y() + 1);
+	this->bloco->set_y(this->bloco->get_y() - 1);
+	return this->bloco->get_y();
+}
+
+int Keyboard::Down(std::shared_ptr<Collision> collision, std::vector<std::shared_ptr<Bloco>> others){
+	while(!collision->is_colliding(bloco) && !collision->is_colliding(bloco,others))
 		this->bloco->set_y(this->bloco->get_y() + 1);
 	this->bloco->set_y(this->bloco->get_y() - 1);
 	return this->bloco->get_y();

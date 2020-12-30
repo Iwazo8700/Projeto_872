@@ -1,17 +1,17 @@
 #include "MainController.hpp"
 		
-MainController::MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato){
+MainController::MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato, bool collision_type){
 	this->map = map;
 	this->players = players;
-	std::shared_ptr<Collision> col (new Collision(this->map));
+	std::shared_ptr<Collision> col (new Collision(this->map, collision_type));
 	this->collision = col;
 	this->formats = formato;
 }
 
-MainController::MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec){
+MainController::MainController(std::shared_ptr<Map> map, std::shared_ptr<std::vector<std::shared_ptr<Player>>> players, std::shared_ptr<Formato> formato, std::vector<std::shared_ptr<IAFunctions>> iafunc_vec, bool collision_type){
 	this->map = map;
 	this->players = players;
-	std::shared_ptr<Collision> col (new Collision(this->map));
+	std::shared_ptr<Collision> col (new Collision(this->map, collision_type));
 	this->collision = col;
 	this->formats = formato;
 	this->iafunc_vec = iafunc_vec;
@@ -58,7 +58,12 @@ void MainController::step(){
 	int player_num = 1;
 	for(auto player : *(this->players)){
 		if(player->is_alive()){
-			is_space = player->get_keyboard()->Space(this->collision);
+			std::vector<std::shared_ptr<Bloco>> tmp_vector;
+			for(auto pl_piece : *(this->players))
+				if(pl_piece != player)
+					tmp_vector.push_back(pl_piece->get_piece());
+
+			is_space = player->get_keyboard()->Space(this->collision, tmp_vector);
 			if((should_move(player) && player->is_alive()) || is_space){
 				player->get_piece()->set_y(player->get_piece()->get_y()+1);
 
@@ -90,16 +95,13 @@ void MainController::step(){
 					player_num++;
 					continue;
 				}
+				if(this->collision->is_colliding(player->get_piece(), tmp_vector))
+					player->get_piece()->set_y(player->get_piece()->get_y()-1);
 			}
-			std::vector<std::shared_ptr<Bloco>> tmp_vector;
-			for(auto pl_piece : *(this->players))
-				if(pl_piece != player)
-					tmp_vector.push_back(pl_piece->get_piece());
-
 
 			tmp = player->get_piece()->get_x();
 			player->get_piece()->set_x(player->get_keyboard()->Desloc());
-			if(this->collision->is_colliding(player->get_piece()) || this->collision->is_colliding(tmp_blk,tmp_vector))
+			if(this->collision->is_colliding(player->get_piece()) || this->collision->is_colliding(player->get_piece(),tmp_vector))
 				player->get_piece()->set_x(tmp);
 		
 			tmp_blk = std::make_shared<Bloco>(*(player->get_piece()));
