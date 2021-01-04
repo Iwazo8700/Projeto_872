@@ -76,11 +76,11 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 			break;
 
 		// Zera o vetor que recebe a mensagem para nao haver lixo nele
-		memset(v,0,100);
+		memset(v,'\0',100);
 	
 		// Recebe mensagem
-		my_socket.receive_from(boost::asio::buffer(v,120),tmp_remote_endpoint);
-		
+		my_socket.receive_from(boost::asio::buffer(v,120),tmp_remote_endpoint);		
+
 		if(end_program)
 			break;
 
@@ -104,10 +104,7 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 		}else{
 			// Caso o IP da mensagem ja esteja no jogo
 
-			// Pega as informacoes do json recebido
-			int letter = 0;
-			for(letter = 99; v[letter] != '}'; letter--);
-			v[letter+1] = '\0';		
+			// Pega as informacoes do json recebido	
 			j = json::parse(v);
 
 			if(j["Quit"] == true){

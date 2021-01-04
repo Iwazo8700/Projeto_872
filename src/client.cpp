@@ -126,14 +126,10 @@ int main(){
 		}
 
 		// Limpa vetor que recebera a mensagem para nao haver lixo nele
-		memset(recv, 0, 2000);
+		memset(recv, '\0', 2000);
 		
 		// Recebe mensagem do servidor
-		meu_socket.receive_from(boost::asio::buffer(recv, 2000), remote_endpoint);
-
-		// Limpa a mensagem
-		for(letter = 1999; recv[letter] != '}'; letter--);
-		recv[letter+1] = '\0';		
+		meu_socket.receive_from(boost::asio::buffer(recv, 2000), remote_endpoint);	
 		
 		j = json::parse(recv);
 		
@@ -201,5 +197,7 @@ int main(){
 		}
 	}
 	
+	std::cout << "Jogo Finalizado" << std::endl;	
+
 	return 0;
 }
