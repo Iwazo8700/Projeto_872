@@ -25,3 +25,8 @@ Controles:
 * E --> GIra a peça no sentido horário
 
 O jogo termina quando todos os jogadores jogando tiverem perdido, e o servidor é finalizado.
+
+
+OBS: O jogo possui um arquivo com as configurações chamado config na pasta assets. É importante que o cliente e o servidor estejam usando as mesmas configurações.
+
+O jogo foi desenvolvido e testado em Ubuntu 16.04 e 20.04. Embora o jogo possua diferetes parâmetros que podem ser modificados no arquivo de configuração a maioria deles foi testada mais profundamente apenas nas configurações padrões, de modo que é possível que alterá-las cause bugs.
