@@ -59,15 +59,15 @@ void MainController::step(){
 	for(auto player : *(this->players)){
 		if(player->is_alive()){
 
-			std::vector<std::shared_ptr<Bloco>> tmp_vector(0);
+			std::shared_ptr<std::vector<std::shared_ptr<Bloco>>> tmp_vector(new std::vector<std::shared_ptr<Bloco>>(0));
 			int p_counter = 1;
 			for(auto pl_piece : *(this->players)){
 				if(p_counter != player_num)
-					tmp_vector.push_back(pl_piece->get_piece());
+					tmp_vector->push_back(pl_piece->get_piece());
 				p_counter++;
 			}
 
-			is_space = player->get_keyboard()->Space(this->collision, tmp_vector);
+			is_space = player->get_keyboard()->Space(this->collision, *tmp_vector);
 			if((should_move(player) && player->is_alive()) || is_space){
 				player->get_piece()->set_y(player->get_piece()->get_y()+1);
 				
@@ -101,23 +101,23 @@ void MainController::step(){
 					continue;
 				}
 
-				if(this->collision->is_colliding(player->get_piece(), tmp_vector))
+				if(this->collision->is_colliding(player->get_piece(), *tmp_vector))
 					player->get_piece()->set_y(player->get_piece()->get_y()-1);
 			}
 
 			tmp = player->get_piece()->get_x();
 			player->get_piece()->set_x(player->get_keyboard()->Desloc());
-			if(this->collision->is_colliding(player->get_piece()) || this->collision->is_colliding(player->get_piece(),tmp_vector))
+			if(this->collision->is_colliding(player->get_piece()) || this->collision->is_colliding(player->get_piece(),*tmp_vector))
 				player->get_piece()->set_x(tmp);
 		
 			tmp_blk = std::make_shared<Bloco>(*(player->get_piece()));
 			tmp_blk->set_formato(player->get_keyboard()->Rotation());
-			if(!(this->collision->is_colliding(tmp_blk) || this->collision->is_colliding(tmp_blk,tmp_vector)))
+			if(!(this->collision->is_colliding(tmp_blk) || this->collision->is_colliding(tmp_blk,*tmp_vector)))
 				player->get_piece()->set_formato(tmp_blk->get_formato());
 
 			tmp = player->get_piece()->get_y();
 			player->get_piece()->set_y(player->get_keyboard()->Desloc_Vert());
-			if(this->collision->is_colliding(player->get_piece()) || this->collision->is_colliding(player->get_piece(),tmp_vector))
+			if(this->collision->is_colliding(player->get_piece()) || this->collision->is_colliding(player->get_piece(),*tmp_vector))
 				player->get_piece()->set_y(tmp);
 		}
 		player_num++;

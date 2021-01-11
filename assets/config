@@ -46,7 +46,6 @@ block_g = 0
 block_b = 255
 
 # Define se as peças dos jogadores devem colidir entre si
-# Colisoes somente funcionam para 2 players, nao funcionam para mais que isso
 normal = false
 
 host_ip = 127.0.0.1
