@@ -23,3 +23,5 @@ Controles:
 * Space --> Desce a peça o máximo possível
 * Q --> Gira a peça no sentido anti-horário
 * E --> GIra a peça no sentido horário
+
+O jogo termina quando todos os jogadores jogando tiverem perdido, e o servidor é finalizado.
