@@ -1,10 +1,10 @@
 # Altura e largura da tela
-screen_width = 440
-screen_height = 440
+screen_width = 880
+screen_height = 880
 
 # Número de linhas e colunas no mapa
-lines = 20
-columns = 10
+lines = 40
+columns = 20
 
 # Tempo entre inicial cada queda automática do bloco
 speed = 500
@@ -46,6 +46,7 @@ block_g = 0
 block_b = 255
 
 # Define se as peças dos jogadores devem colidir entre si
-normal = true
+# Colisoes somente funcionam para 2 players, nao funcionam para mais que isso
+normal = false
 
 host_ip = 127.0.0.1

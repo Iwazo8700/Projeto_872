@@ -87,7 +87,7 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 		// Se o IP do qual a mensagem foi recebida for novo, adiciona um novo Player ao jogo
 		if(player_map.count(tmp_remote_endpoint) == 0){
 			// Cria novo Player, com seu bloco e teclado
-			std::shared_ptr<Bloco> block (new Bloco(counter%(COLUMNS-4),-5,format->get_random()));
+			std::shared_ptr<Bloco> block (new Bloco(counter%(COLUMNS-3),-4,format->get_random()));
 			std::shared_ptr<Keyboard> key (new Keyboard(block, keyboard_time, num_lines));
 			std::shared_ptr<Player> player (new Player(block, key, speed));
 
@@ -95,8 +95,8 @@ void udp_connection(std::shared_ptr<std::vector<std::shared_ptr<Player>>> player
 			mtx.lock();
 			remote_endpoint->push_back(tmp_remote_endpoint);	
 			player_vec->push_back(player);
-			mtx.unlock();
 			player_map.insert(std::pair<udp::endpoint,std::shared_ptr<Player>>(tmp_remote_endpoint,player));
+			mtx.unlock();			
 
 			my_socket.send_to(boost::asio::buffer(confirmation_message), tmp_remote_endpoint);
 			counter += 4; // Atualiza a posicao para os blocos dos player nao surgirem no mesmo local
@@ -159,9 +159,8 @@ int main(){
 	std::shared_ptr<Collision> collision (new Collision(map, normal));
 	
 	std::shared_ptr<std::vector<std::shared_ptr<Player>>> player_vec(new std::vector<std::shared_ptr<Player>>(0));
-	std::shared_ptr<MainController> ctrl;
 	
-	ctrl = std::shared_ptr<MainController>(new MainController(map, player_vec, format,normal));
+	std::shared_ptr<MainController> ctrl(new MainController(map, player_vec, format,normal));
 
 	json j;
 
@@ -179,14 +178,16 @@ int main(){
 	while(1){
 
 		auto start = std::chrono::steady_clock::now(); // Contador para regular FPS
-		
+	
 		// Executa um passo do programa
 		mtx.lock();
+		ctrl->set_players(player_vec);
 		ctrl->step();
 		mtx.unlock();
 
 		// Se todos o player morreram, acaba o jogo
-		end_game = true;		
+		end_game = true;
+		
 		for(auto plyr : *player_vec)
 			if(plyr->is_alive())
 				end_game = false;
@@ -212,7 +213,7 @@ int main(){
 		j["Players"] = containers;
 		j["Map"] = *tmp_map;
 		j["Over"] = false;
-		
+	
 		// Envia o json para cada jogador conectado
 		for(auto endpoint : *remote_endpoint)
 			my_socket.send_to(boost::asio::buffer(j.dump()), endpoint);
@@ -223,47 +224,8 @@ int main(){
 		std::chrono::duration<double> diff = end-start;
 		if(diff.count()/1000 < delay)
 			SDL_Delay(delay-diff.count()/1000);
-
-
-		/*
-
-		if(key->Save()){
-			int tmp_count = 0;
-			std::vector<Container> containers(player_vec.size());
-			for(auto plyr : player_vec){
-				containers[tmp_count++].set_data(*plyr,*(plyr->get_piece()));
-			}
-
-			j["Players"] = containers;
-			j["Map"] = *map;
-			std::ofstream o("../assets/savefile.json");
-			o << j << std::endl;
-		}
-		if(key->Load()){
-			std::ifstream i("../assets/savefile.json");
-			if (i.is_open() ) {
-				i >> j;
-				i.close();
-				std::vector<Container> containers;
-				int player_num = 0;
-				for(auto plyr : player_vec){
-					plyr->set_points(j["Players"][player_num]["player"]["points"]);
-					plyr->set_speed(j["Players"][player_num]["player"]["speed"]);
-					plyr->set_lines_completed(j["Players"][player_num]["player"]["lines_completed"]);
-					map->set_map(j["Players"][player_num]["map"]["map"]);
-					plyr->get_piece()->set_formato(j["Players"][player_num]["block"]["formato"]);
-					plyr->get_piece()->set_x(j["Players"][player_num]["block"]["x"]);
-					plyr->get_piece()->set_y(j["Players"][player_num]["block"]["y"]);
-					player_num++;
-				}
-			} else {
-				std::cout << "Erro ao tentar ler arquivo de saves!" << std::endl;
-			}
-		}
-
-		*/
 	}
-	
+
 
 	// Caso o jogo tenha acabado, envia uma mensagem avisando que o jogo acabou para cada player
 	int tmp_count = 0;
@@ -279,9 +241,11 @@ int main(){
 	for(auto endpoint : *remote_endpoint)
 		my_socket.send_to(boost::asio::buffer(j.dump()), endpoint);
 
-	// Define a flag de termino de programa como true e espera a thread acabar
+		// Define a flag de termino de programa como true e espera a thread acabar
 	end_program = true;
 	communication.join();	
+	
+	std::cout << "Jogo Finalizado" << std::endl;
 
 	return 0;
 }

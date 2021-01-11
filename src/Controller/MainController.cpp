@@ -58,15 +58,19 @@ void MainController::step(){
 	int player_num = 1;
 	for(auto player : *(this->players)){
 		if(player->is_alive()){
-			std::vector<std::shared_ptr<Bloco>> tmp_vector;
-			for(auto pl_piece : *(this->players))
-				if(pl_piece != player)
+
+			std::vector<std::shared_ptr<Bloco>> tmp_vector(0);
+			int p_counter = 1;
+			for(auto pl_piece : *(this->players)){
+				if(p_counter != player_num)
 					tmp_vector.push_back(pl_piece->get_piece());
+				p_counter++;
+			}
 
 			is_space = player->get_keyboard()->Space(this->collision, tmp_vector);
 			if((should_move(player) && player->is_alive()) || is_space){
 				player->get_piece()->set_y(player->get_piece()->get_y()+1);
-
+				
 				if(this->collision->is_colliding(player->get_piece())){
 					player->get_piece()->set_y(player->get_piece()->get_y()-1);
 					if(is_dead(player)){
@@ -75,7 +79,8 @@ void MainController::step(){
 						continue;
 					}
 					this->map->add_to_map(player->get_piece(),player_num);
-					player->set_piece(this->create_random_block((4*(player_num-1))%(this->map->get_map().size()-4),player->get_piece()->get_initial_y()));
+					player->set_piece(this->create_random_block((4*(player_num-1))%(this->map->get_map()[0].size()-3),player->get_piece()->get_initial_y()));
+
 					points = this->update_board();
 					switch(points){
 						case 1:
@@ -95,6 +100,7 @@ void MainController::step(){
 					player_num++;
 					continue;
 				}
+
 				if(this->collision->is_colliding(player->get_piece(), tmp_vector))
 					player->get_piece()->set_y(player->get_piece()->get_y()-1);
 			}

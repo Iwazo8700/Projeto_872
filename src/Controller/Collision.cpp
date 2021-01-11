@@ -36,7 +36,6 @@ bool Collision::is_colliding(std::shared_ptr<Bloco> block){
 bool Collision::is_colliding(std::shared_ptr<Bloco> block, std::vector<std::shared_ptr<Bloco>> others){
 	if(this->piece_collide && others.size()){
 		std::vector<std::vector<bool>> vec = block->get_formato();
-		std::vector<std::vector<int>> current_block = this->map->get_map();
 		std::vector<std::vector<int>> current_map = this->map->get_map();
 		int height = current_map.size();
 		int width = current_map[0].size();
@@ -50,12 +49,10 @@ bool Collision::is_colliding(std::shared_ptr<Bloco> block, std::vector<std::shar
 			x_other = other->get_x();
 			y_other = other->get_y();
 			std::vector<std::vector<bool>> tmp_vec = other->get_formato();
-			int other_width = tmp_vec.size();
-			int other_height = tmp_vec[0].size();
+			int other_height = tmp_vec.size();
+			int other_width = tmp_vec[0].size();
 			for(auto line : vec){
 				for(auto element : line){
-					if(element && (y+i >= height || j+x < 0 || j+x >= width))
-						return true;
 					if(element && y+i-y_other>=0 && y+i-y_other<other_height && j+x-x_other>=0 && j+x-x_other<other_width && tmp_vec[y+i-y_other][j+x-x_other])
 						return true;
 					j++;

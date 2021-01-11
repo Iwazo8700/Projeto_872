@@ -70,12 +70,12 @@ int main(){
 	std::shared_ptr<Sprite> sprite6 (new Sprite(sdl,""));
 	std::shared_ptr<Sprite> sprite8 (new Sprite(sdl,""));
 	sprite2->set_texture(sdl->create_map_texture(LINES,COLUMNS,BLOCK_SIZE_X,BLOCK_SIZE_Y,thickness,r,g,b));
-	sprite7->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,block_r,block_g,block_b));
-	sprite4->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,(block_r+100)%256,block_g,block_b));
-	sprite5->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,block_r,(block_g+100)%256,block_b));
-	sprite6->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,block_r,block_g,(block_b+100)%256));
-	sprite->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,(block_r+100)%256,block_g,(block_b+100)%256));
-	sprite8->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,block_r,(block_g+100)%256,(block_b+100)%256));
+	sprite7->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,255,255,0));
+	sprite4->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,0,0,255));
+	sprite5->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,0,255,0));
+	sprite6->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,255,0,0));
+	sprite->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,255,255,255));
+	sprite8->set_texture(sdl->create_block_texture(BLOCK_SIZE_X,BLOCK_SIZE_Y,0,255,255));
 	std::shared_ptr<Sprite> sprite3 (new Sprite(sdl, "../assets/score.png"));
 	std::shared_ptr<Map> map (new Map(COLUMNS,LINES,BLOCK_SIZE_X,BLOCK_SIZE_Y));
 	std::shared_ptr<Image> img (new Image(SHIFT_X, SHIFT_Y,BLOCK_SIZE_X*COLUMNS,BLOCK_SIZE_Y*LINES,sprite2));
@@ -169,6 +169,8 @@ int main(){
 		meu_socket.send_to(boost::asio::buffer(j.dump()), remote_endpoint);
 	}
 
+	std::cout << "Jogo Finalizado" << std::endl;
+
 	// Caso o jogo tenha terminado, renderiza na tela apenas as pontuacoes dos jogadores
 	if(j["Over"] == true){
 		std::shared_ptr<Image> score (new Image(SCREEN_W/2-6*BLOCK_SIZE_X,1*BLOCK_SIZE_Y,12*BLOCK_SIZE_X,4*BLOCK_SIZE_Y,sprite3));
@@ -197,7 +199,5 @@ int main(){
 		}
 	}
 	
-	std::cout << "Jogo Finalizado" << std::endl;	
-
 	return 0;
 }
